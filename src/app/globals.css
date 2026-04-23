@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #0B0B0B;
+    --muted: #F5F5F5;
+    --accent: #9AD000;
+    --surface: #ffffff;
+  }
+  body {
+    @apply bg-background text-primary antialiased;
+  }
+}
+
+@layer utilities {
+  .animate-in {
+    animation-duration: 200ms;
+  }
+  .slide-in-from-right {
+    animation-name: slideInFromRight;
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
