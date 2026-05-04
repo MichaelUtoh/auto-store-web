@@ -3,10 +3,10 @@ import { productsApi } from "@/lib/api/products";
 import type { Product, ProductSearchParams } from "@/types/product";
 
 export interface FilterState {
-  q?: string;
+  search?: string;
   category?: string;
-  minPrice?: number;
-  maxPrice?: number;
+  min?: number;
+  max?: number;
   make?: string;
   model?: string;
   year?: number;
@@ -50,13 +50,34 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       const { filters } = get();
       const merged = { ...filters, ...params };
       const res = await productsApi.getProducts(merged);
-      const data = (res as { data?: { data: Product[]; total: number; page: number; limit: number; totalPages: number } }).data ?? res;
-      const list = Array.isArray(data) ? data : (data as { data?: Product[] }).data ?? [];
-      const total = (data as { total?: number }).total ?? list.length;
-      const page = (data as { page?: number }).page ?? 1;
-      const limit = (data as { limit?: number }).limit ?? 20;
-      const totalPages =
-        ((data as { totalPages?: number }).totalPages ?? Math.ceil(total / limit)) || 1;
+      type ProductsListMeta = {
+        page?: number;
+        limit?: number;
+        total?: number;
+        total_pages?: number;
+        totalPages?: number;
+      };
+      type ProductsListBody = {
+        data?: Product[] | { data: Product[] };
+        meta?: ProductsListMeta;
+      };
+      const body = res as ProductsListBody;
+      const meta = body.meta;
+      const raw = body.data;
+      const list = Array.isArray(raw)
+        ? raw
+        : raw &&
+            typeof raw === "object" &&
+            "data" in raw &&
+            Array.isArray((raw as { data: Product[] }).data)
+          ? (raw as { data: Product[] }).data
+          : [];
+      const total = meta?.total ?? list.length;
+      const page = meta?.page ?? merged.page ?? 1;
+      const limit = meta?.limit ?? merged.limit ?? 20;
+      const totalPagesFromMeta =
+        meta?.total_pages ?? meta?.totalPages ?? Math.ceil(total / Math.max(limit, 1));
+      const totalPages = Math.max(1, totalPagesFromMeta);
       set({
         products: list,
         pagination: { page, limit, total, totalPages },

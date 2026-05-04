@@ -9,6 +9,7 @@ import { SORT_OPTIONS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 interface ProductFilterProps {
+  /** Each item's `slug` is used as the `category` query param (e.g. engine-drivetrain). */
   categories?: { id: string; name: string; slug: string }[];
   className?: string;
 }
@@ -20,6 +21,10 @@ export function ProductFilter({ categories = [], className }: ProductFilterProps
 
   const updateParams = (updates: Record<string, string | number | undefined>) => {
     const params = new URLSearchParams(searchParams.toString());
+    if ("min" in updates || "max" in updates) {
+      params.delete("minPrice");
+      params.delete("maxPrice");
+    }
     Object.entries(updates).forEach(([key, value]) => {
       if (value === undefined || value === "") {
         params.delete(key);
@@ -37,13 +42,15 @@ export function ProductFilter({ categories = [], className }: ProductFilterProps
 
   const category = searchParams.get("category") ?? "";
   const sort = searchParams.get("sort") ?? "";
-  const minPrice = searchParams.get("minPrice") ?? "";
-  const maxPrice = searchParams.get("maxPrice") ?? "";
+  const min =
+    searchParams.get("min") ?? searchParams.get("minPrice") ?? "";
+  const max =
+    searchParams.get("max") ?? searchParams.get("maxPrice") ?? "";
 
   return (
     <aside
       className={cn(
-        "space-y-6 rounded-lg border border-gray-200 bg-surface p-4",
+        "space-y-6 rounded-lg border border-gray-200 bg-surface p-4 lg:sticky lg:top-16 lg:z-10",
         className
       )}
     >
@@ -63,11 +70,13 @@ export function ProductFilter({ categories = [], className }: ProductFilterProps
             onChange={(e) => updateParams({ category: e.target.value })}
           >
             <option value="">All</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.slug ?? c.id}>
-                {c.name}
-              </option>
-            ))}
+            {categories
+              .filter((c) => c.slug?.trim())
+              .map((c) => (
+                <option key={c.id} value={c.slug}>
+                  {c.name}
+                </option>
+              ))}
           </select>
         </div>
       )}
@@ -79,15 +88,15 @@ export function ProductFilter({ categories = [], className }: ProductFilterProps
             type="number"
             placeholder="Min"
             min={0}
-            value={minPrice}
-            onChange={(e) => updateParams({ minPrice: e.target.value })}
+            value={min}
+            onChange={(e) => updateParams({ min: e.target.value })}
           />
           <Input
             type="number"
             placeholder="Max"
             min={0}
-            value={maxPrice}
-            onChange={(e) => updateParams({ maxPrice: e.target.value })}
+            value={max}
+            onChange={(e) => updateParams({ max: e.target.value })}
           />
         </div>
       </div>

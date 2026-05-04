@@ -8,18 +8,25 @@ import { Pagination } from "@/components/shared/Pagination";
 import { useProductStore } from "@/store/useProductStore";
 import { productsApi } from "@/lib/api/products";
 import { ITEMS_PER_PAGE } from "@/lib/constants";
+import {
+  flattenCategoryFilterOptions,
+  type CategoryFilterOption,
+  type CategoryTreeNode,
+} from "@/lib/utils/categories";
+import { parsePriceQueryParam } from "@/lib/utils/parsePriceParam";
 import { useState } from "react";
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
-  const q = searchParams.get("q") ?? "";
-  const [categories, setCategories] = useState<{ id: string; name: string; slug: string }[]>([]);
+  const searchQuery = searchParams.get("search") ?? "";
+  const [categories, setCategories] = useState<CategoryFilterOption[]>([]);
   const { products, pagination, isLoading, fetchProducts } = useProductStore();
 
   useEffect(() => {
     productsApi.getCategories().then((res) => {
-      const data = (res as { data?: { id: string; name: string; slug: string }[] }).data ?? res;
-      setCategories(Array.isArray(data) ? data : []);
+      const data = (res as { data?: unknown }).data ?? res;
+      const list = Array.isArray(data) ? data : [];
+      setCategories(flattenCategoryFilterOptions(list as CategoryTreeNode[]));
     }).catch(() => {});
   }, []);
 
@@ -32,19 +39,27 @@ export default function SearchPage() {
       | "newest"
       | "popular"
       | undefined;
+    const min = parsePriceQueryParam(
+      searchParams.get("min") ?? searchParams.get("minPrice")
+    );
+    const max = parsePriceQueryParam(
+      searchParams.get("max") ?? searchParams.get("maxPrice")
+    );
     fetchProducts({
-      q: q || undefined,
+      search: searchQuery || undefined,
       page,
       limit: ITEMS_PER_PAGE,
       category,
       sort,
+      min,
+      max,
     });
-  }, [searchParams, q, fetchProducts]);
+  }, [searchParams, searchQuery, fetchProducts]);
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-semibold text-primary">
-        {q ? `Search results for "${q}"` : "Search"}
+        {searchQuery ? `Search results for "${searchQuery}"` : "Search"}
       </h1>
       <p className="mt-2 text-secondary">
         {!isLoading && products.length >= 0 && `${pagination.total} results`}
@@ -57,7 +72,11 @@ export default function SearchPage() {
           <ProductGrid
             products={products}
             isLoading={isLoading}
-            emptyMessage={q ? "No products match your search." : "Enter a search term above."}
+            emptyMessage={
+              searchQuery
+                ? "No products match your search."
+                : "Enter a search term above."
+            }
           />
           <div className="mt-8">
             <Pagination

@@ -36,7 +36,7 @@ export function Header() {
     setAccountOpen(false);
     logout();
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-    window.location.href = `${baseUrl}/login`;
+    window.location.href = `${baseUrl}`;
   };
 
   return (

@@ -8,6 +8,12 @@ import { ProductGrid } from "@/components/product/ProductGrid";
 import { ProductFilter } from "@/components/product/ProductFilter";
 import { Pagination } from "@/components/shared/Pagination";
 import { useProductStore } from "@/store/useProductStore";
+import {
+  flattenCategoryFilterOptions,
+  type CategoryFilterOption,
+  type CategoryTreeNode,
+} from "@/lib/utils/categories";
+import { parsePriceQueryParam } from "@/lib/utils/parsePriceParam";
 
 type SortKey = "price_asc" | "price_desc" | "newest" | "popular";
 
@@ -22,9 +28,7 @@ export function ProductCatalog({
 }) {
   const searchParams = useSearchParams();
 
-  const [categories, setCategories] = useState<
-    { id: string; name: string; slug: string }[]
-  >([]);
+  const [categories, setCategories] = useState<CategoryFilterOption[]>([]);
 
   const { products, pagination, isLoading, fetchProducts } = useProductStore();
 
@@ -32,33 +36,33 @@ export function ProductCatalog({
     productsApi
       .getCategories()
       .then((res) => {
-        const data = (res as { data?: { id: string; name: string; slug: string }[] }).data ?? res;
+        const data = (res as { data?: unknown }).data ?? res;
         const list = Array.isArray(data) ? data : [];
-        setCategories(list);
+        setCategories(flattenCategoryFilterOptions(list as CategoryTreeNode[]));
       })
       .catch(() => {});
   }, []);
 
   useEffect(() => {
     const page = parseInt(searchParams.get("page") ?? "1", 10);
-    const q = searchParams.get("q") ?? undefined;
+    const search = searchParams.get("search") ?? undefined;
     const category = searchParams.get("category") ?? undefined;
     const sort = (searchParams.get("sort") ?? undefined) as SortKey | undefined;
-    const minPrice = searchParams.get("minPrice")
-      ? Number(searchParams.get("minPrice"))
-      : undefined;
-    const maxPrice = searchParams.get("maxPrice")
-      ? Number(searchParams.get("maxPrice"))
-      : undefined;
+    const min = parsePriceQueryParam(
+      searchParams.get("min") ?? searchParams.get("minPrice")
+    );
+    const max = parsePriceQueryParam(
+      searchParams.get("max") ?? searchParams.get("maxPrice")
+    );
 
     fetchProducts({
       page,
       limit: ITEMS_PER_PAGE,
-      q,
+      search,
       category,
       sort,
-      minPrice,
-      maxPrice,
+      min,
+      max,
     });
   }, [searchParams, fetchProducts]);
 

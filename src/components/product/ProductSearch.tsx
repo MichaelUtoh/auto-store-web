@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 interface ProductSearchProps {
   className?: string;
   placeholder?: string;
-  /** When set, submit goes to this path with q and current search params (e.g. /products). */
+  /** When set, submit goes to this path with `search` and current search params (e.g. /products). */
   basePath?: string;
   /** Show a submit button next to the input. */
   showButton?: boolean;
@@ -25,27 +25,27 @@ export function ProductSearch({
 }: ProductSearchProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const qFromUrl = basePath ? searchParams.get("q") ?? "" : "";
-  const [value, setValue] = useState(qFromUrl);
+  const searchFromUrl = basePath ? (searchParams.get("search") ?? "") : "";
+  const [value, setValue] = useState(searchFromUrl);
   const debounced = useDebounce(value, 300);
 
   useEffect(() => {
     if (basePath) {
-      setValue(searchParams.get("q") ?? "");
+      setValue(searchParams.get("search") ?? "");
     }
-  }, [basePath, searchParams.get("q")]);
+  }, [basePath, searchParams.get("search")]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const q = value.trim() || debounced.trim();
+    const term = value.trim() || debounced.trim();
     if (basePath) {
       const params = new URLSearchParams(searchParams.toString());
-      if (q) params.set("q", q);
-      else params.delete("q");
+      if (term) params.set("search", term);
+      else params.delete("search");
       params.set("page", "1");
       router.push(`${basePath}?${params.toString()}`);
-    } else if (q) {
-      router.push(`/search?q=${encodeURIComponent(q)}`);
+    } else if (term) {
+      router.push(`/search?search=${encodeURIComponent(term)}`);
     }
   };
 

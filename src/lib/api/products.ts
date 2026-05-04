@@ -28,10 +28,13 @@ export const productsApi = {
     return data;
   },
 
-  searchProducts: async (q: string, params: Omit<ProductSearchParams, "q"> = {}) => {
+  searchProducts: async (
+    term: string,
+    params: Omit<ProductSearchParams, "search"> = {}
+  ) => {
     const { data } = await apiClient.get<ApiResponse<PaginatedResponse<Product>>>(
       "/products/search",
-      { params: { q, ...params } }
+      { params: { search: term, ...params } }
     );
     return data;
   },

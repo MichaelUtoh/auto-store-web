@@ -46,10 +46,13 @@ export interface VehicleCompatibility {
 }
 
 export interface ProductSearchParams {
-  q?: string;
+  /** Plain-text name search; maps to API query param `search`. */
+  search?: string;
   category?: string;
-  minPrice?: number;
-  maxPrice?: number;
+  /** Min product price (inclusive); sent as `?min=` to the API. */
+  min?: number;
+  /** Max product price (inclusive); sent as `?max=` to the API. */
+  max?: number;
   make?: string;
   model?: string;
   year?: number;

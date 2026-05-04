@@ -29,36 +29,39 @@ export function Pagination({
 
   if (totalPages <= 1) return null;
 
+  const canPrev = currentPage > 1;
+  const canNext = currentPage < totalPages;
+
   return (
     <nav
       className={cn("flex items-center justify-center gap-2", className)}
       aria-label="Pagination"
     >
-      <Button
-        variant="outline"
-        size="icon"
-        asChild
-        disabled={currentPage <= 1}
-        aria-label="Previous page"
-      >
-        <Link href={buildUrl(currentPage - 1)}>
+      {canPrev ? (
+        <Button variant="outline" size="icon" asChild aria-label="Previous page">
+          <Link href={buildUrl(currentPage - 1)}>
+            <ChevronLeft className="h-4 w-4" />
+          </Link>
+        </Button>
+      ) : (
+        <Button variant="outline" size="icon" disabled aria-label="Previous page">
           <ChevronLeft className="h-4 w-4" />
-        </Link>
-      </Button>
+        </Button>
+      )}
       <span className="px-4 text-sm text-secondary">
         Page {currentPage} of {totalPages}
       </span>
-      <Button
-        variant="outline"
-        size="icon"
-        asChild
-        disabled={currentPage >= totalPages}
-        aria-label="Next page"
-      >
-        <Link href={buildUrl(currentPage + 1)}>
+      {canNext ? (
+        <Button variant="outline" size="icon" asChild aria-label="Next page">
+          <Link href={buildUrl(currentPage + 1)}>
+            <ChevronRight className="h-4 w-4" />
+          </Link>
+        </Button>
+      ) : (
+        <Button variant="outline" size="icon" disabled aria-label="Next page">
           <ChevronRight className="h-4 w-4" />
-        </Link>
-      </Button>
+        </Button>
+      )}
     </nav>
   );
 }
