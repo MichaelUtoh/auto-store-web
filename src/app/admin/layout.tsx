@@ -70,11 +70,11 @@ export default function AdminLayout({
     <div className="min-h-screen bg-background">
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 h-full w-64 border-r border-gray-200 bg-surface transition-transform lg:translate-x-0",
+          "fixed left-0 top-0 z-40 h-full w-64 border-r border-border bg-surface transition-transform lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex h-16 items-center justify-between border-b border-gray-200 px-4">
+        <div className="flex h-16 items-center justify-between border-b border-border px-4">
           <span className="font-semibold text-primary">Admin</span>
           <Button
             variant="ghost"
@@ -93,12 +93,12 @@ export default function AdminLayout({
               href={href}
               onClick={() => setSidebarOpen(false)}
               className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium transition-colors",
                 pathname === href ||
                 (href === "/admin/products" &&
                   pathname.startsWith("/admin/products") &&
                   pathname !== "/admin/products/new")
-                  ? "bg-accent/10 text-accent"
+                  ? "bg-primary text-primary-foreground"
                   : "text-secondary hover:bg-muted hover:text-primary"
               )}
             >
@@ -110,7 +110,7 @@ export default function AdminLayout({
       </aside>
 
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-gray-200 bg-surface px-4">
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-surface/95 px-4 backdrop-blur-sm">
           <Button
             variant="ghost"
             size="icon"
@@ -132,7 +132,7 @@ export default function AdminLayout({
 
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-30 bg-overlay/50 lg:hidden"
           aria-hidden="true"
           onClick={() => setSidebarOpen(false)}
         />

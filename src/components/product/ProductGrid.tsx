@@ -12,14 +12,11 @@ interface ProductGridProps {
 
 function ProductCardSkeleton() {
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200">
-      <Skeleton className="aspect-square w-full" />
-      <div className="space-y-2 p-4">
-        <Skeleton className="h-5 w-3/4" />
-        <Skeleton className="h-6 w-1/3" />
-      </div>
-      <div className="p-4 pt-0">
-        <Skeleton className="h-10 w-full" />
+    <div className="flex flex-col">
+      <Skeleton className="aspect-[4/5] w-full rounded-3xl bg-white" />
+      <div className="mt-3 space-y-2">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-5 w-1/3" />
       </div>
     </div>
   );
@@ -32,7 +29,7 @@ export function ProductGrid({
 }: ProductGridProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
           <ProductCardSkeleton key={i} />
         ))}
@@ -42,14 +39,14 @@ export function ProductGrid({
 
   if (!products.length) {
     return (
-      <div className="flex min-h-[200px] flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 p-8 text-center text-secondary">
-        {emptyMessage}
+      <div className="flex min-h-[240px] flex-col items-center justify-center rounded-3xl bg-muted p-8 text-center">
+        <p className="text-sm leading-relaxed text-secondary">{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

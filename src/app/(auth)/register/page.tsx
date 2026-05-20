@@ -45,12 +45,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <Card>
+    <Card className="border-0 shadow-soft">
       <CardHeader>
-        <h1 className="text-2xl font-semibold text-primary">Create account</h1>
+        <h1 className="text-2xl font-bold text-primary">Create account</h1>
         <p className="text-sm text-secondary">
           Already have an account?{" "}
-          <Link href="/login" className="text-accent hover:underline">
+          <Link href="/login" className="font-medium text-primary underline-offset-4 hover:underline">
             Sign in
           </Link>
         </p>

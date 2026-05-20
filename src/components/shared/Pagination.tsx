@@ -34,7 +34,7 @@ export function Pagination({
 
   return (
     <nav
-      className={cn("flex items-center justify-center gap-2", className)}
+      className={cn("flex items-center justify-center gap-3", className)}
       aria-label="Pagination"
     >
       {canPrev ? (
@@ -48,8 +48,8 @@ export function Pagination({
           <ChevronLeft className="h-4 w-4" />
         </Button>
       )}
-      <span className="px-4 text-sm text-secondary">
-        Page {currentPage} of {totalPages}
+      <span className="rounded-pill bg-muted px-4 py-2 text-sm font-medium text-secondary">
+        {currentPage} / {totalPages}
       </span>
       {canNext ? (
         <Button variant="outline" size="icon" asChild aria-label="Next page">

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ProductDetails } from "@/components/product/ProductDetails";
 import { ProductGrid } from "@/components/product/ProductGrid";
+import { SectionHeader } from "@/components/layout/SectionHeader";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { productsApi } from "@/lib/api/products";
 import type { Product } from "@/types/product";
@@ -43,7 +44,7 @@ export default function ProductPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto flex min-h-[50vh] items-center justify-center px-4">
+      <div className="page-container flex min-h-[50vh] items-center justify-center py-16">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -51,9 +52,12 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <h2 className="text-xl font-semibold text-primary">Product not found</h2>
-        <Link href="/products" className="mt-4 inline-block text-accent hover:underline">
+      <div className="page-container py-16 text-center">
+        <h2 className="text-xl font-bold text-primary">Product not found</h2>
+        <Link
+          href="/products"
+          className="mt-4 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline"
+        >
           Browse products
         </Link>
       </div>
@@ -61,21 +65,19 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="page-container py-6 sm:py-8">
       <nav className="mb-6 text-sm text-secondary">
         <Link href="/products" className="hover:text-primary">
           Products
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-primary">{product.name}</span>
+        <span className="font-medium text-primary">{product.name}</span>
       </nav>
       <ProductDetails product={product} />
       {related.length > 0 && (
-        <section className="mt-16">
-          <h2 className="text-xl font-semibold text-primary">Related products</h2>
-          <div className="mt-4">
-            <ProductGrid products={related} />
-          </div>
+        <section className="mt-14 sm:mt-16">
+          <SectionHeader title="You may also like" className="mb-6" />
+          <ProductGrid products={related} />
         </section>
       )}
     </div>

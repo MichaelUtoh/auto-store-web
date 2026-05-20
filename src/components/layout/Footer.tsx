@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const links = [
   { href: "/products", label: "Products" },
@@ -10,29 +11,32 @@ const links = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-gray-200 bg-muted/30">
-      <div className="container mx-auto flex flex-col gap-8 px-4 py-12 md:flex-row md:items-center md:justify-between">
+    <footer className="mt-auto hidden border-t border-border bg-muted/40 lg:block">
+      <div className="page-container flex flex-col gap-8 py-12 md:flex-row md:items-center md:justify-between">
         <div>
-          <Link href="/" className="text-lg font-semibold text-primary">
+          <Link href="/" className="text-xl font-bold tracking-tight text-primary">
             AutoParts
           </Link>
-          <p className="mt-2 text-sm text-secondary">
-            Quality auto parts for your vehicle.
+          <p className="mt-2 max-w-xs text-sm leading-relaxed text-secondary">
+            Quality auto parts for your vehicle. Shop with confidence.
           </p>
         </div>
-        <nav className="flex flex-wrap gap-6" aria-label="Footer navigation">
-          {links.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className="text-sm text-secondary hover:text-primary"
-            >
-              {label}
-            </Link>
-          ))}
-        </nav>
+        <div className="flex flex-col items-start gap-6 sm:items-end">
+          <ThemeToggle />
+          <nav className="flex flex-wrap gap-6" aria-label="Footer navigation">
+            {links.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-sm font-medium text-secondary transition-colors hover:text-foreground"
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+        </div>
       </div>
-      <div className="border-t border-gray-200 px-4 py-4 text-center text-sm text-secondary">
+      <div className="border-t border-border px-4 py-5 text-center text-sm text-secondary">
         © {new Date().getFullYear()} AutoParts. All rights reserved.
       </div>
     </footer>

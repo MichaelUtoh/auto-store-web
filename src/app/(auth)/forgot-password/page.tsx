@@ -38,9 +38,9 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <Card>
+      <Card className="border-0 shadow-soft">
         <CardHeader>
-          <h1 className="text-2xl font-semibold text-primary">
+          <h1 className="text-2xl font-bold text-primary">
             Check your email
           </h1>
           <p className="text-secondary">
@@ -58,9 +58,9 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <Card>
+    <Card className="border-0 shadow-soft">
       <CardHeader>
-        <h1 className="text-2xl font-semibold text-primary">Forgot password</h1>
+        <h1 className="text-2xl font-bold text-primary">Forgot password</h1>
         <p className="text-sm text-secondary">
           Enter your email and we&apos;ll send you a reset link.
         </p>
@@ -84,7 +84,7 @@ export default function ForgotPasswordPage() {
             {isSubmitting ? "Sending…" : "Send reset link"}
           </Button>
           <p className="text-center text-sm text-secondary">
-            <Link href="/login" className="text-accent hover:underline">
+            <Link href="/login" className="font-medium text-primary underline-offset-4 hover:underline">
               Back to sign in
             </Link>
           </p>

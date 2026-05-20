@@ -18,19 +18,19 @@ export default function CartPage() {
   }, [isAuthenticated, fetchCart]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-semibold text-primary">Shopping cart</h1>
+    <div className="page-container py-6 sm:py-8">
+      <h1 className="page-title">Shopping cart</h1>
       {items.length === 0 ? (
-        <div className="mt-8 flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 py-16 text-center">
+        <div className="mt-8 flex flex-col items-center justify-center rounded-3xl bg-muted py-20 text-center">
           <p className="text-secondary">Your cart is empty.</p>
-          <Button asChild className="mt-4">
+          <Button asChild className="mt-6" size="lg">
             <Link href="/products">Browse products</Link>
           </Button>
         </div>
       ) : (
-        <div className="mt-6 grid gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <div className="divide-y divide-gray-200 rounded-lg border border-gray-200 bg-surface p-4">
+        <div className="mt-6 grid gap-8 md:grid-cols-3 md:gap-10">
+          <div className="md:col-span-2">
+            <div className="rounded-3xl bg-muted px-4 sm:px-5">
               {items.map((item) => (
                 <CartItem key={item.id} item={item} />
               ))}

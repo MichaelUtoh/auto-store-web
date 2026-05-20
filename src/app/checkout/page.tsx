@@ -59,9 +59,9 @@ export default function CheckoutPage() {
 
   if (items.length === 0 && !orderId) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <h2 className="text-xl font-semibold text-primary">Your cart is empty</h2>
-        <Button asChild className="mt-4">
+      <div className="page-container flex min-h-[50vh] flex-col items-center justify-center py-16 text-center">
+        <h2 className="text-xl font-bold text-primary">Your cart is empty</h2>
+        <Button asChild className="mt-6" size="lg">
           <Link href="/products">Browse products</Link>
         </Button>
       </div>
@@ -69,26 +69,30 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-semibold text-primary">Checkout</h1>
-      <div className="mt-6 grid gap-8 lg:grid-cols-2">
+    <div className="page-container py-6 sm:py-8">
+      <h1 className="page-title">Checkout</h1>
+      <div className="mt-6 grid gap-8 md:grid-cols-2 md:gap-10">
         <div>
-          <h2 className="mb-4 font-medium text-primary">Shipping address</h2>
+          <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-secondary">
+            Shipping address
+          </h2>
           <CheckoutForm onSubmit={handleSubmit} isLoading={isSubmitting} />
         </div>
         <div>
-          <h2 className="mb-4 font-medium text-primary">Order summary</h2>
-          <div className="rounded-lg border border-gray-200 bg-muted/30 p-4">
-            <div className="max-h-64 space-y-3 overflow-y-auto">
+          <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-secondary">
+            Order summary
+          </h2>
+          <div className="rounded-3xl bg-muted p-5">
+            <div className="max-h-64 space-y-1 overflow-y-auto">
               {items.map((item) => (
                 <CartItem key={item.id} item={item} />
               ))}
             </div>
-            <div className="mt-4 border-t border-gray-200 pt-4">
-              <div className="flex justify-between text-lg font-semibold text-primary">
-                <span>Subtotal</span>
-                <span>{formatPrice(getTotalPrice())}</span>
-              </div>
+            <div className="mt-4 flex justify-between border-t border-border pt-4">
+              <span className="font-semibold text-primary">Subtotal</span>
+              <span className="text-lg font-bold text-primary">
+                {formatPrice(getTotalPrice())}
+              </span>
             </div>
           </div>
         </div>

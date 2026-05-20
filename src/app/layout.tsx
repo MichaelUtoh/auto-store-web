@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Toaster } from "react-hot-toast";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { ToasterTheme } from "@/components/theme/ToasterTheme";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { BottomNav } from "@/components/layout/BottomNav";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { AuthHydration } from "@/components/auth/AuthHydration";
@@ -24,15 +26,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="min-h-screen flex flex-col font-sans">
-        <AuthHydration />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <MobileNav />
-        <CartDrawer />
-        <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <body className="flex min-h-screen flex-col font-sans">
+        <ThemeProvider>
+          <AuthHydration />
+          <Header />
+          <main className="flex-1 pb-24 lg:pb-0">{children}</main>
+          <Footer />
+          <BottomNav />
+          <MobileNav />
+          <CartDrawer />
+          <ToasterTheme />
+        </ThemeProvider>
       </body>
     </html>
   );

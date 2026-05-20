@@ -9,7 +9,6 @@ import { SORT_OPTIONS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 interface ProductFilterProps {
-  /** Each item's `slug` is used as the `category` query param (e.g. engine-drivetrain). */
   categories?: { id: string; name: string; slug: string }[];
   className?: string;
 }
@@ -50,13 +49,13 @@ export function ProductFilter({ categories = [], className }: ProductFilterProps
   return (
     <aside
       className={cn(
-        "space-y-6 rounded-lg border border-gray-200 bg-surface p-4 lg:sticky lg:top-16 lg:z-10",
+        "space-y-6 rounded-3xl bg-muted p-5 md:sticky md:top-20 md:z-10 lg:p-6",
         className
       )}
     >
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-primary">Filters</h3>
-        <Button variant="ghost" size="sm" onClick={clearAll}>
+        <h3 className="font-bold text-primary">Filters</h3>
+        <Button variant="ghost" size="sm" onClick={clearAll} className="h-8 text-xs">
           Clear all
         </Button>
       </div>
@@ -65,7 +64,7 @@ export function ProductFilter({ categories = [], className }: ProductFilterProps
         <div>
           <Label className="mb-2 block">Category</Label>
           <select
-            className="w-full rounded-md border border-gray-200 bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+            className="select-field"
             value={category}
             onChange={(e) => updateParams({ category: e.target.value })}
           >
@@ -104,7 +103,7 @@ export function ProductFilter({ categories = [], className }: ProductFilterProps
       <div>
         <Label className="mb-2 block">Sort by</Label>
         <select
-          className="w-full rounded-md border border-gray-200 bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+          className="select-field"
           value={sort}
           onChange={(e) => updateParams({ sort: e.target.value })}
         >

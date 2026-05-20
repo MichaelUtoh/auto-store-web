@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useAuthStore } from "@/store/useAuthStore";
 import { usersApi } from "@/lib/api/users";
 import type { User } from "@/types/user";
@@ -66,13 +67,26 @@ export default function ProfilePage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <h2 className="text-lg font-semibold text-primary">Profile</h2>
-        <p className="text-sm text-secondary">Update your account details.</p>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <div className="space-y-6">
+      <Card id="appearance">
+        <CardHeader>
+          <h2 className="text-lg font-semibold text-foreground">Appearance</h2>
+          <p className="text-sm text-secondary">
+            Choose light, dark, or match your system settings.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <ThemeToggle />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <h2 className="text-lg font-semibold text-foreground">Profile</h2>
+          <p className="text-sm text-secondary">Update your account details.</p>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <Label htmlFor="firstName">First name</Label>
@@ -112,8 +126,9 @@ export default function ProfilePage() {
           <Button type="submit" disabled={saving}>
             {saving ? "Saving…" : "Save changes"}
           </Button>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

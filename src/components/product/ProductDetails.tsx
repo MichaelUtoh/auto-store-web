@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { ShoppingCart, Heart } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils/format";
 import type { Product } from "@/types/product";
@@ -18,14 +18,40 @@ interface ProductDetailsProps {
   product: Product;
 }
 
+function AccordionSection({
+  title,
+  children,
+  defaultOpen = false,
+}: {
+  title: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <div className="border-b border-border">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between py-4 text-left font-semibold text-primary"
+      >
+        {title}
+        <span className="text-xl font-light text-secondary">{open ? "−" : "+"}</span>
+      </button>
+      {open && <div className="pb-4 text-sm leading-relaxed text-secondary">{children}</div>}
+    </div>
+  );
+}
+
 export function ProductDetails({ product }: ProductDetailsProps) {
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
   const addItem = useCartStore((s) => s.addItem);
 
   const images = normalizeProductImages(product.images);
-
   const mainSrc = images[activeImage] ?? images[0];
+  const lineTotal = product.price * quantity;
 
   const handleAddToCart = async () => {
     try {
@@ -37,104 +63,141 @@ export function ProductDetails({ product }: ProductDetailsProps) {
   };
 
   return (
-    <div className="grid gap-8 lg:grid-cols-2">
-      <div className="space-y-4">
-        <div className="relative aspect-square overflow-hidden rounded-lg border border-gray-200 bg-muted">
-          <Image
-            src={mainSrc}
-            alt={product.name}
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            unoptimized={isRemoteImageSrc(mainSrc)}
-            className="object-cover"
-          />
-        </div>
-        {images.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto">
-            {images.map((src, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setActiveImage(i)}
-                className={cn(
-                  "relative h-20 w-20 shrink-0 overflow-hidden rounded border-2 transition-colors",
-                  activeImage === i ? "border-accent" : "border-gray-200"
-                )}
-              >
-                <Image
-                  src={src}
-                  alt=""
-                  fill
-                  unoptimized={isRemoteImageSrc(src)}
-                  className="object-cover"
-                />
-              </button>
-            ))}
+    <>
+      <div className="grid gap-8 md:gap-10 lg:grid-cols-2 lg:gap-12">
+        <div className="space-y-4">
+          <div className="relative aspect-square overflow-hidden rounded-3xl bg-muted shadow-card">
+            <Image
+              src={mainSrc}
+              alt={product.name}
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              unoptimized={isRemoteImageSrc(mainSrc)}
+              className="object-cover"
+            />
           </div>
-        )}
-      </div>
-
-      <div>
-        <h1 className="text-2xl font-semibold text-primary">{product.name}</h1>
-        {product.sku && (
-          <p className="mt-1 text-sm text-secondary">SKU: {product.sku}</p>
-        )}
-        <div className="mt-4 flex items-center gap-3">
-          <span className="text-2xl font-semibold text-primary">
-            {formatPrice(product.price)}
-          </span>
-          {product.compareAtPrice != null && product.compareAtPrice > product.price && (
-            <span className="text-lg text-secondary line-through">
-              {formatPrice(product.compareAtPrice)}
-            </span>
+          {images.length > 1 && (
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+              {images.map((src, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setActiveImage(i)}
+                  className={cn(
+                    "relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl transition-all",
+                    activeImage === i
+                      ? "ring-2 ring-primary ring-offset-2"
+                      : "opacity-70 hover:opacity-100"
+                  )}
+                >
+                  <Image
+                    src={src}
+                    alt=""
+                    fill
+                    unoptimized={isRemoteImageSrc(src)}
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+            </div>
           )}
         </div>
 
-        {product.description && (
-          <p className="mt-6 text-secondary">{product.description}</p>
-        )}
-
-        {product.specs && Object.keys(product.specs).length > 0 && (
-          <div className="mt-6">
-            <h3 className="font-semibold text-primary">Specifications</h3>
-            <table className="mt-2 w-full text-sm">
-              <tbody>
-                {Object.entries(product.specs).map(([key, value]) => (
-                  <tr key={key} className="border-b border-gray-100">
-                    <td className="py-2 text-secondary">{key}</td>
-                    <td className="py-2 text-primary">{value}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="pb-28 lg:pb-0">
+          <h1 className="text-2xl font-bold tracking-tight text-primary sm:text-3xl">
+            {product.name}
+          </h1>
+          {product.sku && (
+            <p className="mt-2 text-sm text-secondary">SKU: {product.sku}</p>
+          )}
+          <div className="mt-4 flex items-center gap-3">
+            <span className="text-2xl font-bold text-primary sm:text-3xl">
+              {formatPrice(product.price)}
+            </span>
+            {product.compareAtPrice != null &&
+              product.compareAtPrice > product.price && (
+                <span className="text-lg text-secondary line-through">
+                  {formatPrice(product.compareAtPrice)}
+                </span>
+              )}
           </div>
-        )}
 
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2">
-            <label htmlFor="qty" className="text-sm font-medium text-primary">
-              Quantity
-            </label>
-            <input
-              id="qty"
-              type="number"
-              min={1}
-              max={product.stock ?? 99}
-              value={quantity}
-              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10) || 1))}
-              className="w-20 rounded border border-gray-200 px-3 py-2 text-center"
-            />
+          <div className="mt-8 flex items-center gap-4">
+            <span className="text-sm font-semibold text-primary">Quantity</span>
+            <div className="flex items-center rounded-pill bg-muted px-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-full"
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                disabled={quantity <= 1}
+                aria-label="Decrease quantity"
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <span className="min-w-[2.5rem] text-center text-sm font-semibold">
+                {quantity}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-full"
+                onClick={() =>
+                  setQuantity((q) =>
+                    Math.min(product.stock ?? 99, q + 1)
+                  )
+                }
+                aria-label="Increase quantity"
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          <Button onClick={handleAddToCart} className="min-w-[140px]">
-            <ShoppingCart className="mr-2 h-4 w-4" />
+
+          <div className="mt-8 space-y-0">
+            {product.description && (
+              <AccordionSection title="Product details" defaultOpen>
+                <p>{product.description}</p>
+              </AccordionSection>
+            )}
+
+            {product.specs && Object.keys(product.specs).length > 0 && (
+              <AccordionSection title="Specifications">
+                <dl className="space-y-2">
+                  {Object.entries(product.specs).map(([key, value]) => (
+                    <div
+                      key={key}
+                      className="flex justify-between gap-4 border-b border-border/60 py-2 last:border-0"
+                    >
+                      <dt className="text-secondary">{key}</dt>
+                      <dd className="font-medium text-primary">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </AccordionSection>
+            )}
+          </div>
+
+          <div className="mt-8 hidden lg:block">
+            <Button size="lg" className="w-full sm:w-auto" onClick={handleAddToCart}>
+              Add to cart — {formatPrice(lineTotal)}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="fixed bottom-20 left-0 right-0 z-40 border-t border-border bg-background/95 px-4 py-3 backdrop-blur-sm lg:hidden">
+        <div className="mx-auto flex max-w-lg items-center gap-4">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs text-secondary">Total</p>
+            <p className="text-lg font-bold text-primary">{formatPrice(lineTotal)}</p>
+          </div>
+          <Button size="lg" className="flex-1" onClick={handleAddToCart}>
             Add to cart
-          </Button>
-          <Button variant="outline" size="icon" aria-label="Add to wishlist">
-            <Heart className="h-4 w-4" />
           </Button>
         </div>
       </div>
-    </div>
+    </>
   );
 }

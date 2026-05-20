@@ -10,17 +10,33 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#0B0B0B",
-        secondary: "#2A2A2A",
-        accent: "#9AD000",
+        background: "hsl(var(--background) / <alpha-value>)",
+        foreground: "hsl(var(--foreground) / <alpha-value>)",
+        primary: {
+          DEFAULT: "hsl(var(--primary) / <alpha-value>)",
+          foreground: "hsl(var(--primary-foreground) / <alpha-value>)",
+        },
+        secondary: "hsl(var(--secondary) / <alpha-value>)",
+        accent: "hsl(var(--accent) / <alpha-value>)",
+        muted: "hsl(var(--muted) / <alpha-value>)",
+        surface: "hsl(var(--surface) / <alpha-value>)",
+        border: "hsl(var(--border) / <alpha-value>)",
+        ring: "hsl(var(--ring) / <alpha-value>)",
+        overlay: "hsl(var(--overlay) / <alpha-value>)",
         success: "#10b981",
         error: "#ef4444",
-        background: "#FFFFFF",
-        muted: "#F5F5F5",
-        surface: "#ffffff",
       },
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],
+      },
+      borderRadius: {
+        "2xl": "1.25rem",
+        "3xl": "1.5rem",
+        "4xl": "2rem",
+        pill: "9999px",
+      },
+      spacing: {
+        "safe-bottom": "env(safe-area-inset-bottom, 0px)",
       },
     },
   },

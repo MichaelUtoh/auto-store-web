@@ -33,39 +33,42 @@ export default function AccountLayout({
 
   if (!hasHydrated) {
     return (
-      <div className="container mx-auto flex min-h-[40vh] items-center justify-center px-4">
+      <div className="page-container flex min-h-[40vh] items-center justify-center">
         <p className="text-secondary">Loading…</p>
       </div>
     );
   }
   if (!isAuthenticated) {
     return (
-      <div className="container mx-auto flex min-h-[40vh] items-center justify-center px-4">
+      <div className="page-container flex min-h-[40vh] items-center justify-center">
         <p className="text-secondary">Redirecting to sign in…</p>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-semibold text-primary">Account</h1>
-      <nav className="mt-6 flex gap-4 border-b border-gray-200" aria-label="Account">
+    <div className="page-container py-6 sm:py-8">
+      <h1 className="page-title">Account</h1>
+      <nav
+        className="scrollbar-hide -mx-4 mt-6 flex gap-2 overflow-x-auto px-4 sm:-mx-0 sm:px-0"
+        aria-label="Account"
+      >
         {nav.map(({ href, label }) => (
           <Link
             key={href}
             href={href}
             className={cn(
-              "border-b-2 px-1 py-3 text-sm font-medium transition-colors",
+              "shrink-0 rounded-pill px-4 py-2.5 text-sm font-medium transition-colors",
               pathname === href
-                ? "border-accent text-accent"
-                : "border-transparent text-secondary hover:text-primary"
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-secondary hover:text-primary"
             )}
           >
             {label}
           </Link>
         ))}
       </nav>
-      <div className="mt-6">{children}</div>
+      <div className="mt-6 sm:mt-8">{children}</div>
     </div>
   );
 }

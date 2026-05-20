@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { useProductStore } from "@/store/useProductStore";
 import { productsApi } from "@/lib/api/products";
@@ -32,16 +33,21 @@ export default function CategoryPage() {
   }, [slug, fetchProducts]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-semibold text-primary">
-        {category?.name ?? "Category"}
-      </h1>
-      <p className="mt-2 text-secondary">
+    <div className="page-container py-6 sm:py-8">
+      <nav className="mb-4 text-sm text-secondary">
+        <Link href="/categories" className="hover:text-primary">
+          Categories
+        </Link>
+        <span className="mx-2">/</span>
+        <span className="font-medium text-primary">{category?.name ?? slug}</span>
+      </nav>
+      <h1 className="page-title">{category?.name ?? "Category"}</h1>
+      <p className="mt-2 text-sm text-secondary sm:text-base">
         {category?.productCount != null
           ? `${category.productCount} products`
           : "Browse products in this category."}
       </p>
-      <div className="mt-6">
+      <div className="mt-6 sm:mt-8">
         <ProductGrid
           products={products}
           isLoading={isLoading}

@@ -19,33 +19,34 @@ export function CartDrawer() {
   return (
     <>
       <div
-        className="fixed inset-0 z-50 bg-black/50 md:bg-transparent"
+        className="fixed inset-0 z-50 bg-overlay/40 backdrop-blur-[2px]"
         aria-hidden="true"
         onClick={closeCartDrawer}
       />
       <div
         className={cn(
-          "fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col border-l border-gray-200 bg-surface shadow-xl",
-          "animate-in slide-in-from-right duration-200"
+          "fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col bg-background shadow-float",
+          "animate-in slide-in-from-right duration-200",
+          "rounded-l-3xl"
         )}
         role="dialog"
         aria-label="Shopping cart"
       >
-        <div className="flex items-center justify-between border-b border-gray-200 p-4">
-          <h2 className="text-lg font-semibold text-primary">Cart</h2>
+        <div className="flex items-center justify-between px-5 py-5">
+          <h2 className="text-xl font-bold text-primary">Your cart</h2>
           <Button
             variant="ghost"
             size="icon"
             onClick={closeCartDrawer}
             aria-label="Close cart"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5" strokeWidth={1.5} />
           </Button>
         </div>
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto px-5">
           {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center text-secondary">
-              <p>Your cart is empty.</p>
+            <div className="flex flex-col items-center justify-center rounded-3xl bg-muted py-16 text-center">
+              <p className="text-secondary">Your cart is empty.</p>
               <Button variant="outline" className="mt-4" asChild>
                 <Link href="/products" onClick={closeCartDrawer}>
                   Browse products
@@ -53,7 +54,7 @@ export function CartDrawer() {
               </Button>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1">
               {items.map((item) => (
                 <CartItem key={item.id} item={item} />
               ))}
@@ -61,7 +62,7 @@ export function CartDrawer() {
           )}
         </div>
         {items.length > 0 && (
-          <div className="border-t border-gray-200 p-4">
+          <div className="border-t border-border p-5">
             <CartSummary onCheckout={closeCartDrawer} />
           </div>
         )}

@@ -6,8 +6,12 @@ import { productsApi } from "@/lib/api/products";
 import { ITEMS_PER_PAGE } from "@/lib/constants";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { ProductFilter } from "@/components/product/ProductFilter";
+import { CategoryScroller } from "@/components/product/CategoryScroller";
+import { SectionHeader } from "@/components/layout/SectionHeader";
 import { Pagination } from "@/components/shared/Pagination";
+import { ProductSearch } from "@/components/product/ProductSearch";
 import { useProductStore } from "@/store/useProductStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import {
   flattenCategoryFilterOptions,
   type CategoryFilterOption,
@@ -21,16 +25,24 @@ export function ProductCatalog({
   title = "Products",
   basePath = "/products",
   emptyMessage = "No products match your filters. Try adjusting or clear filters.",
+  showHero = false,
 }: {
   title?: string;
   basePath?: string;
   emptyMessage?: string;
+  showHero?: boolean;
 }) {
   const searchParams = useSearchParams();
+  const user = useAuthStore((s) => s.user);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const [categories, setCategories] = useState<CategoryFilterOption[]>([]);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   const { products, pagination, isLoading, fetchProducts } = useProductStore();
+
+  const firstName = user?.firstName;
+  const isHome = basePath === "/";
 
   useEffect(() => {
     productsApi
@@ -67,11 +79,50 @@ export function ProductCatalog({
   }, [searchParams, fetchProducts]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-semibold text-primary">{title}</h1>
+    <div className="page-container py-6 sm:py-8 md:py-10">
+      {(showHero || isHome) && (
+        <section className="mb-8 sm:mb-10">
+          <h1 className="text-2xl font-bold leading-tight tracking-tight text-primary sm:text-3xl md:text-4xl">
+            {isAuthenticated && firstName
+              ? `Discover quality parts, ${firstName}`
+              : "Discover quality auto parts"}
+          </h1>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-secondary sm:text-base">
+            Everything you need to keep your vehicle running smoothly.
+          </p>
+          <div className="mt-5 lg:hidden">
+            <ProductSearch basePath={basePath === "/" ? "/products" : basePath} />
+          </div>
+        </section>
+      )}
 
-      <div className="mt-6 flex flex-col gap-8 lg:flex-row">
-        <div className="lg:w-64 lg:shrink-0">
+      {categories.length > 0 && (showHero || isHome) && (
+        <section className="mb-8 sm:mb-10">
+          <SectionHeader title="Categories" href="/categories" className="mb-4" />
+          <CategoryScroller categories={categories} />
+        </section>
+      )}
+
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <SectionHeader
+          title={title}
+          href={basePath !== "/products" ? "/products" : undefined}
+        />
+        <button
+          type="button"
+          onClick={() => setFilterOpen((o) => !o)}
+          className="self-start rounded-pill border border-border px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-muted lg:hidden"
+        >
+          {filterOpen ? "Hide filters" : "Filters"}
+        </button>
+      </div>
+
+      <div className="flex flex-col gap-8 md:flex-row md:gap-10 lg:gap-12">
+        <div
+          className={`md:w-72 md:shrink-0 lg:w-64 ${
+            filterOpen ? "block" : "hidden md:block"
+          }`}
+        >
           <ProductFilter categories={categories} />
         </div>
 
@@ -82,11 +133,11 @@ export function ProductCatalog({
             emptyMessage={emptyMessage}
           />
 
-          <div className="mt-8">
+          <div className="mt-10">
             <Pagination
               currentPage={pagination.page}
               totalPages={pagination.totalPages}
-              basePath={basePath}
+              basePath={basePath === "/" ? "/" : basePath}
             />
           </div>
         </div>
@@ -94,4 +145,3 @@ export function ProductCatalog({
     </div>
   );
 }
-

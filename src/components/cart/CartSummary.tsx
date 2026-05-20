@@ -18,20 +18,20 @@ export function CartSummary({
   const total = getTotalPrice();
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-muted/30 p-4">
-      <div className="flex items-center justify-between text-lg font-semibold text-primary">
-        <span>Subtotal</span>
-        <span>{formatPrice(total)}</span>
+    <div className="rounded-3xl bg-muted p-5">
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-secondary">Subtotal</span>
+        <span className="text-xl font-bold text-primary">{formatPrice(total)}</span>
       </div>
-      <p className="mt-1 text-sm text-secondary">
+      <p className="mt-1 text-xs text-secondary">
         Shipping and tax calculated at checkout.
       </p>
       {showCheckoutButton && (
         <div className="mt-4 space-y-2">
-          <Button className="w-full" asChild onClick={onCheckout}>
+          <Button className="w-full" size="lg" asChild onClick={onCheckout}>
             <Link href="/checkout">Proceed to checkout</Link>
           </Button>
-          <Button variant="outline" className="w-full" asChild>
+          <Button variant="link" className="w-full" asChild>
             <Link href="/products">Continue shopping</Link>
           </Button>
         </div>

@@ -9,17 +9,17 @@ export default function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-primary">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-primary">Dashboard</h1>
       <p className="mt-1 text-secondary">
         Welcome back{user?.firstName ? `, ${user.firstName}` : ""}.
       </p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <Link
           href="/admin/products"
-          className="flex items-center gap-4 rounded-lg border border-gray-200 bg-surface p-6 text-primary transition-colors hover:border-accent hover:bg-muted/50"
+          className="flex items-center gap-4 rounded-3xl bg-muted p-6 text-primary transition-colors hover:bg-muted/80"
         >
-          <div className="rounded-lg bg-accent/10 p-3">
-            <Package className="h-6 w-6 text-accent" />
+          <div className="rounded-2xl bg-primary p-3">
+            <Package className="h-6 w-6 text-primary-foreground" strokeWidth={1.5} />
           </div>
           <div>
             <h2 className="font-semibold">Manage products</h2>
@@ -30,10 +30,10 @@ export default function AdminDashboardPage() {
         </Link>
         <Link
           href="/admin/products/new"
-          className="flex items-center gap-4 rounded-lg border border-gray-200 bg-surface p-6 text-primary transition-colors hover:border-accent hover:bg-muted/50"
+          className="flex items-center gap-4 rounded-3xl bg-muted p-6 text-primary transition-colors hover:bg-muted/80"
         >
-          <div className="rounded-lg bg-accent/10 p-3">
-            <PlusCircle className="h-6 w-6 text-accent" />
+          <div className="rounded-2xl bg-primary p-3">
+            <PlusCircle className="h-6 w-6 text-primary-foreground" strokeWidth={1.5} />
           </div>
           <div>
             <h2 className="font-semibold">Add product</h2>

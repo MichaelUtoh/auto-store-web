@@ -11,9 +11,7 @@ import { cn } from "@/lib/utils";
 interface ProductSearchProps {
   className?: string;
   placeholder?: string;
-  /** When set, submit goes to this path with `search` and current search params (e.g. /products). */
   basePath?: string;
-  /** Show a submit button next to the input. */
   showButton?: boolean;
 }
 
@@ -52,23 +50,24 @@ export function ProductSearch({
   return (
     <form
       onSubmit={handleSubmit}
-      className={cn("relative flex gap-2", className)}
+      className={cn("flex gap-2", className)}
     >
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary" />
+        <Search
+          className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary"
+          strokeWidth={1.5}
+        />
         <Input
           type="search"
           placeholder={placeholder}
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          className="pl-10"
+          className="pl-11"
           aria-label="Search products"
         />
       </div>
       {showButton && (
-        <Button type="submit" size="default">
-          Search
-        </Button>
+        <Button type="submit">Search</Button>
       )}
     </form>
   );

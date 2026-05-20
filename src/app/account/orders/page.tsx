@@ -16,7 +16,13 @@ export default function OrdersPage() {
     ordersApi
       .getOrders(1, 20)
       .then((res) => {
-        const data = (res as { data?: { data?: Order[] } }).data?.data ?? (res as { data?: Order[] }).data;
+        const raw = res as unknown as { data?: { data?: Order[] } | Order[] };
+        const data =
+          raw.data && !Array.isArray(raw.data)
+            ? raw.data.data
+            : Array.isArray(raw.data)
+              ? raw.data
+              : undefined;
         setOrders(Array.isArray(data) ? data : []);
       })
       .catch(() => setOrders([]))
@@ -38,7 +44,7 @@ export default function OrdersPage() {
       <Card>
         <CardContent className="py-12 text-center text-secondary">
           <p>No orders yet.</p>
-          <Link href="/products" className="mt-4 inline-block text-accent hover:underline">
+          <Link href="/products" className="mt-4 inline-block font-medium text-primary underline-offset-4 hover:underline">
             Browse products
           </Link>
         </CardContent>
@@ -53,7 +59,7 @@ export default function OrdersPage() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <Link
               href={`/account/orders/${order.id}`}
-              className="font-medium text-accent hover:underline"
+              className="font-semibold text-primary hover:underline"
             >
               #{order.orderNumber}
             </Link>
