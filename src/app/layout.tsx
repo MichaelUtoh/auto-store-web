@@ -9,6 +9,7 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { AuthHydration } from "@/components/auth/AuthHydration";
+import { NotificationPolling } from "@/components/notifications/NotificationPolling";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({
       <body className="flex min-h-screen flex-col font-sans">
         <ThemeProvider>
           <AuthHydration />
+          <NotificationPolling />
           <Header />
           <main className="flex-1 pb-24 lg:pb-0">{children}</main>
           <Footer />

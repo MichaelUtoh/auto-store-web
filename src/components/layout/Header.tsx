@@ -2,7 +2,15 @@
 
 import { Suspense, useRef, useState, useEffect } from "react";
 import Link from "next/link";
-import { ShoppingCart, Search, User, LogOut, UserCircle, Shield } from "lucide-react";
+import {
+  ShoppingCart,
+  Search,
+  User,
+  LogOut,
+  UserCircle,
+  Shield,
+  Bell,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUIStore } from "@/store/useUIStore";
 import { useCartStore } from "@/store/useCartStore";
@@ -10,6 +18,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { ProductSearch } from "@/components/product/ProductSearch";
 import { Navbar } from "@/components/layout/Navbar";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { cn } from "@/lib/utils";
 
 export function Header() {
@@ -69,6 +78,8 @@ export function Header() {
         <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle compact className="shrink-0" />
 
+          <NotificationBell />
+
           <Button variant="ghost" size="icon" asChild className="lg:hidden">
             <Link href="/search" aria-label="Search">
               <Search className="h-5 w-5" strokeWidth={1.5} />
@@ -123,6 +134,14 @@ export function Header() {
                 >
                   <UserCircle className="h-4 w-4" strokeWidth={1.5} />
                   View profile
+                </Link>
+                <Link
+                  href="/account/notifications"
+                  onClick={() => setAccountOpen(false)}
+                  className="flex w-full items-center gap-2 px-4 py-3 text-sm font-medium text-foreground hover:bg-muted"
+                >
+                  <Bell className="h-4 w-4" strokeWidth={1.5} />
+                  Notifications
                 </Link>
                 <button
                   type="button"

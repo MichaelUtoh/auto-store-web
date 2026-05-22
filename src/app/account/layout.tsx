@@ -9,6 +9,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 const nav = [
   { href: "/account/profile", label: "Profile" },
   { href: "/account/orders", label: "Orders" },
+  { href: "/account/notifications", label: "Notifications" },
   { href: "/account/addresses", label: "Addresses" },
   { href: "/account/wishlist", label: "Wishlist" },
 ];
