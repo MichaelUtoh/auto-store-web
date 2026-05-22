@@ -17,6 +17,8 @@ type BackendNotification = {
   createdAt?: string;
   action_url?: string;
   actionUrl?: string;
+  href?: string;
+  payload?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
 };
 
@@ -33,6 +35,22 @@ type BackendPreferences = {
   marketing?: boolean;
 };
 
+function resolveNotificationHref(n: BackendNotification): string | undefined {
+  if (n.actionUrl) return n.actionUrl;
+  if (n.action_url) return n.action_url;
+  if (n.href) return n.href;
+  const payload = n.payload ?? n.metadata;
+  if (payload && typeof payload === "object") {
+    const p = payload as Record<string, unknown>;
+    if (typeof p.href === "string") return p.href;
+    if (n.type === "qa.answer_posted" && typeof p.question_id === "string") {
+      const slug = p.slug ?? p.question_slug;
+      if (typeof slug === "string") return `/q/${slug}`;
+    }
+  }
+  return undefined;
+}
+
 export function mapNotificationFromApi(raw: unknown): Notification {
   const n = raw as BackendNotification;
   if (!n?.id) {
@@ -45,8 +63,8 @@ export function mapNotificationFromApi(raw: unknown): Notification {
     type: n.type ?? "SYSTEM",
     read: Boolean(n.read ?? n.is_read),
     createdAt: n.createdAt ?? n.created_at ?? new Date().toISOString(),
-    actionUrl: n.actionUrl ?? n.action_url,
-    metadata: n.metadata,
+    actionUrl: resolveNotificationHref(n),
+    metadata: n.metadata ?? (n.payload as Record<string, unknown> | undefined),
   };
 }
 

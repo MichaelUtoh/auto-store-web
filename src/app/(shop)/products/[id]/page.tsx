@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ProductDetails } from "@/components/product/ProductDetails";
+import { ProductQuestionsSection } from "@/components/qa/ProductQuestionsSection";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { SectionHeader } from "@/components/layout/SectionHeader";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
@@ -74,6 +75,7 @@ export default function ProductPage() {
         <span className="font-medium text-primary">{product.name}</span>
       </nav>
       <ProductDetails product={product} />
+      <ProductQuestionsSection productId={product.id} />
       {related.length > 0 && (
         <section className="mt-14 sm:mt-16">
           <SectionHeader title="You may also like" className="mb-6" />

@@ -1,4 +1,4 @@
-import type { User, UserRole } from "@/types/user";
+import type { MechanicProfile, User, UserRole } from "@/types/user";
 
 /** Typical `/users/me` JSON (snake_case and/or camelCase). */
 export type BackendUserPayload = {
@@ -11,11 +11,32 @@ export type BackendUserPayload = {
   phone?: string;
   avatar?: string;
   role?: string;
+  mechanic_profile?: {
+    id?: string;
+    status?: string;
+    business_name?: string;
+    businessName?: string;
+    is_verified?: boolean;
+    isVerified?: boolean;
+  };
+  mechanicProfile?: BackendUserPayload["mechanic_profile"];
   created_at?: string;
   updated_at?: string;
   createdAt?: string;
   updatedAt?: string;
 };
+
+function mapMechanicProfileFromApi(
+  raw: BackendUserPayload["mechanic_profile"]
+): MechanicProfile | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  return {
+    id: String(raw.id ?? ""),
+    status: String(raw.status ?? ""),
+    businessName: String(raw.business_name ?? raw.businessName ?? ""),
+    isVerified: Boolean(raw.is_verified ?? raw.isVerified),
+  };
+}
 
 /** Unwrap one level of `{ data: T }` from an API response body. */
 export function unwrapApiDataBody(body: unknown): unknown {
@@ -40,6 +61,9 @@ export function mapUserFromApi(raw: unknown): User {
     phone: r.phone,
     avatar: r.avatar,
     role: r.role as UserRole | undefined,
+    mechanicProfile: mapMechanicProfileFromApi(
+      r.mechanicProfile ?? r.mechanic_profile
+    ),
     createdAt: r.createdAt ?? r.created_at ?? "",
     updatedAt: r.updatedAt ?? r.updated_at ?? r.createdAt ?? r.created_at ?? "",
   };

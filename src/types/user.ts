@@ -1,4 +1,11 @@
-export type UserRole = "ADMIN" | "CUSTOMER";
+export type UserRole = "ADMIN" | "CUSTOMER" | "MECHANIC";
+
+export interface MechanicProfile {
+  id: string;
+  status: string;
+  businessName: string;
+  isVerified: boolean;
+}
 
 export interface User {
   id: string;
@@ -8,6 +15,7 @@ export interface User {
   phone?: string;
   avatar?: string;
   role?: UserRole;
+  mechanicProfile?: MechanicProfile;
   createdAt: string;
   updatedAt: string;
 }
