@@ -15,6 +15,8 @@ import {
   type CategoryTreeNode,
 } from "@/lib/utils/categories";
 import { parsePriceQueryParam } from "@/lib/utils/parsePriceParam";
+import { GarageVehicleChip } from "@/components/garage/GarageVehicleChip";
+import Link from "next/link";
 
 export default function SearchPageClient() {
   const searchParams = useSearchParams();
@@ -69,8 +71,9 @@ export default function SearchPageClient() {
         </p>
       )}
 
-      <div className="mt-5">
+      <div className="mt-5 flex flex-wrap items-center gap-3">
         <ProductSearch basePath="/search" showButton />
+        <GarageVehicleChip />
       </div>
 
       <div className="mt-6 flex justify-end lg:hidden">
@@ -97,6 +100,17 @@ export default function SearchPageClient() {
                 : "Enter a search term above."
             }
           />
+          {!isLoading && products.length === 0 && (
+            <p className="mt-6 text-center text-sm text-secondary">
+              Not sure what you need?{" "}
+              <Link
+                href="/parts"
+                className="font-medium text-foreground underline-offset-4 hover:underline"
+              >
+                Use the visual part finder
+              </Link>
+            </p>
+          )}
           <div className="mt-10">
             <Pagination
               currentPage={pagination.page}

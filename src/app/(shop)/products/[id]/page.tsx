@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ProductDetails } from "@/components/product/ProductDetails";
 import { ProductQuestionsSection } from "@/components/qa/ProductQuestionsSection";
+import { PartFinderProductCta } from "@/components/part-finder/PartFinderProductCta";
+import { GarageVehicleChip } from "@/components/garage/GarageVehicleChip";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { SectionHeader } from "@/components/layout/SectionHeader";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
@@ -74,7 +76,11 @@ export default function ProductPage() {
         <span className="mx-2">/</span>
         <span className="font-medium text-primary">{product.name}</span>
       </nav>
+      <div className="mb-4">
+        <GarageVehicleChip />
+      </div>
       <ProductDetails product={product} />
+      <PartFinderProductCta product={product} />
       <ProductQuestionsSection productId={product.id} />
       {related.length > 0 && (
         <section className="mt-14 sm:mt-16">

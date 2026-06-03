@@ -19,11 +19,13 @@ import { useAuthStore } from "@/store/useAuthStore";
 import type { Category } from "@/types/product";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
+import { useGarageStore } from "@/store/useGarageStore";
 
 export default function AskQuestionForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const productIdFromQuery = searchParams.get("product_id") ?? "";
+  const garageVehicle = useGarageStore((s) => s.vehicle);
 
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const hasHydrated = useAuthStore((s) => s._hasHydrated);
@@ -72,6 +74,14 @@ export default function AskQuestionForm() {
       setValue("contextType", "product");
     }
   }, [productIdFromQuery, setValue]);
+
+  useEffect(() => {
+    if (garageVehicle && !productIdFromQuery) {
+      setValue("make", garageVehicle.make);
+      setValue("model", garageVehicle.model);
+      setValue("year", String(garageVehicle.year));
+    }
+  }, [garageVehicle, productIdFromQuery, setValue]);
 
   useEffect(() => {
     productsApi
