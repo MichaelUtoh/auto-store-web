@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { authApi } from "@/lib/api/auth";
+import { linkGuestOnLogin } from "@/lib/chat/identity";
 import type { User, RegisterData } from "@/types/user";
 
 interface AuthStore {
@@ -39,6 +40,9 @@ export const useAuthStore = create<AuthStore>()(
             isAuthenticated: true,
             isLoading: false,
           });
+          if (result.accessToken) {
+            await linkGuestOnLogin(result.accessToken).catch(() => {});
+          }
         } catch {
           set({ isLoading: false });
           throw new Error("Login failed");
@@ -55,6 +59,9 @@ export const useAuthStore = create<AuthStore>()(
             isAuthenticated: true,
             isLoading: false,
           });
+          if (result.accessToken) {
+            await linkGuestOnLogin(result.accessToken).catch(() => {});
+          }
         } catch {
           set({ isLoading: false });
           throw new Error("Registration failed");

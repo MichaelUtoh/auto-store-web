@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUIStore } from "@/store/useUIStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import { openSupportChat } from "@/store/useSupportChatStore";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -18,6 +20,8 @@ export function MobileNav() {
   const isOpen = useUIStore((s) => s.isMobileMenuOpen);
   const closeMobileMenu = useUIStore((s) => s.closeMobileMenu);
   const pathname = usePathname();
+  const user = useAuthStore((s) => s.user);
+  const isAdmin = user?.role?.toLowerCase() === "admin";
 
   if (!isOpen) {
     return null;
@@ -46,6 +50,18 @@ export function MobileNav() {
             {label}
           </Link>
         ))}
+        {!isAdmin && (
+          <button
+            type="button"
+            onClick={() => {
+              closeMobileMenu();
+              openSupportChat({ contextType: "general" });
+            }}
+            className="rounded-md px-4 py-3 text-left text-base font-medium text-secondary hover:bg-muted"
+          >
+            Contact support
+          </button>
+        )}
       </div>
     </div>
   );

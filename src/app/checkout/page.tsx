@@ -48,7 +48,7 @@ export default function CheckoutPage() {
       if (id) {
         setOrderId(id);
         clearCart();
-        router.push(`/account/orders/${id}`);
+        router.push(`/account/orders/${id}?openSupport=1`);
       }
     } finally {
       setIsSubmitting(false);

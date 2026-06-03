@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -9,9 +9,12 @@ import { Button } from "@/components/ui/button";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { ordersApi } from "@/lib/api/orders";
 import type { Order } from "@/types/order";
+import { SupportHelpButton } from "@/components/support/SupportHelpButton";
+import { openSupportChat } from "@/store/useSupportChatStore";
 
 export default function OrderDetailPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const id = params.id as string;
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,6 +30,20 @@ export default function OrderDetailPage() {
       .catch(() => setOrder(null))
       .finally(() => setLoading(false));
   }, [id]);
+
+  useEffect(() => {
+    if (!order || searchParams.get("openSupport") !== "1") return;
+    openSupportChat({
+      contextType: "order",
+      contextId: order.id,
+      label: `About order #${order.orderNumber}`,
+    });
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("openSupport");
+      window.history.replaceState({}, "", url.pathname);
+    }
+  }, [order, searchParams]);
 
   if (loading) {
     return (
@@ -62,6 +79,12 @@ export default function OrderDetailPage() {
       <p className="text-sm text-secondary">
         Placed on {formatDate(order.createdAt)}
       </p>
+      <SupportHelpButton
+        contextType="order"
+        contextId={order.id}
+        contextLabel={`About order #${order.orderNumber}`}
+        label="Questions about this order?"
+      />
 
       <Card>
         <CardHeader>

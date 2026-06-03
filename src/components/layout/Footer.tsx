@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { FooterSupportLink } from "@/components/support/FooterSupportLink";
 
 const links = [
   { href: "/products", label: "Products" },
@@ -25,7 +26,7 @@ export function Footer() {
         </div>
         <div className="flex flex-col items-start gap-6 sm:items-end">
           <ThemeToggle />
-          <nav className="flex flex-wrap gap-6" aria-label="Footer navigation">
+          <nav className="flex flex-wrap items-center gap-6" aria-label="Footer navigation">
             {links.map(({ href, label }) => (
               <Link
                 key={href}
@@ -35,6 +36,7 @@ export function Footer() {
                 {label}
               </Link>
             ))}
+            <FooterSupportLink />
           </nav>
         </div>
       </div>

@@ -11,13 +11,16 @@ import {
   PlusCircle,
   Menu,
   X,
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAdminSupportUnread } from "@/hooks/useAdminSupportUnread";
 
 const nav = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/products/new", label: "Add product", icon: PlusCircle },
+  { href: "/admin/support", label: "Support", icon: MessageSquare },
 ];
 
 export default function AdminLayout({
@@ -31,6 +34,7 @@ export default function AdminLayout({
   const user = useAuthStore((s) => s.user);
   const hasHydrated = useAuthStore((s) => s._hasHydrated);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { unreadCount: supportUnread } = useAdminSupportUnread();
 
   useEffect(() => {
     if (!hasHydrated) return;
@@ -87,25 +91,40 @@ export default function AdminLayout({
           </Button>
         </div>
         <nav className="space-y-1 p-4" aria-label="Admin">
-          {nav.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setSidebarOpen(false)}
-              className={cn(
-                "flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium transition-colors",
-                pathname === href ||
-                (href === "/admin/products" &&
-                  pathname.startsWith("/admin/products") &&
-                  pathname !== "/admin/products/new")
-                  ? "bg-primary text-primary-foreground"
-                  : "text-secondary hover:bg-muted hover:text-primary"
-              )}
-            >
-              <Icon className="h-5 w-5 shrink-0" />
-              {label}
-            </Link>
-          ))}
+          {nav.map(({ href, label, icon: Icon }) => {
+            const isActive =
+              pathname === href ||
+              (href === "/admin/products" &&
+                pathname.startsWith("/admin/products") &&
+                pathname !== "/admin/products/new");
+            const showSupportBadge = href === "/admin/support" && supportUnread > 0;
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setSidebarOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "text-secondary hover:bg-muted hover:text-primary"
+                )}
+              >
+                <Icon className="h-5 w-5 shrink-0" />
+                <span className="flex-1">{label}</span>
+                {showSupportBadge && (
+                  <span
+                    className={cn(
+                      "flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold",
+                      isActive ? "bg-primary-foreground text-primary" : "bg-error text-white"
+                    )}
+                  >
+                    {supportUnread > 99 ? "99+" : supportUnread}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
         </nav>
       </aside>
 
@@ -126,6 +145,14 @@ export default function AdminLayout({
           >
             ← Back to store
           </Link>
+          {supportUnread > 0 && (
+            <Link
+              href="/admin/support"
+              className="ml-auto flex items-center gap-2 rounded-pill bg-error/10 px-3 py-1 text-xs font-medium text-error"
+            >
+              {supportUnread} support {supportUnread === 1 ? "message" : "messages"}
+            </Link>
+          )}
         </header>
         <main className="p-4 md:p-6">{children}</main>
       </div>

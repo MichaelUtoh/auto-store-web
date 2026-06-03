@@ -8,6 +8,7 @@ import { Footer } from "@/components/layout/Footer";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { SupportChatWidget } from "@/components/support/SupportChatWidget";
 import { AuthHydration } from "@/components/auth/AuthHydration";
 import { NotificationPolling } from "@/components/notifications/NotificationPolling";
 
@@ -38,6 +39,7 @@ export default function RootLayout({
           <BottomNav />
           <MobileNav />
           <CartDrawer />
+          <SupportChatWidget />
           <ToasterTheme />
         </ThemeProvider>
       </body>

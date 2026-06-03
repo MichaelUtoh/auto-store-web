@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ProductDetails } from "@/components/product/ProductDetails";
 import { ProductQuestionsSection } from "@/components/qa/ProductQuestionsSection";
 import { PartFinderProductCta } from "@/components/part-finder/PartFinderProductCta";
+import { SupportHelpButton } from "@/components/support/SupportHelpButton";
 import { GarageVehicleChip } from "@/components/garage/GarageVehicleChip";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { SectionHeader } from "@/components/layout/SectionHeader";
@@ -80,6 +81,13 @@ export default function ProductPage() {
         <GarageVehicleChip />
       </div>
       <ProductDetails product={product} />
+      <div className="mt-4">
+        <SupportHelpButton
+          contextType="product"
+          contextId={product.id}
+          contextLabel={`About ${product.name}`}
+        />
+      </div>
       <PartFinderProductCta product={product} />
       <ProductQuestionsSection productId={product.id} />
       {related.length > 0 && (

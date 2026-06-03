@@ -19,6 +19,7 @@ import { ProductSearch } from "@/components/product/ProductSearch";
 import { Navbar } from "@/components/layout/Navbar";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { useAdminSupportUnread } from "@/hooks/useAdminSupportUnread";
 import { cn } from "@/lib/utils";
 
 export function Header() {
@@ -50,6 +51,8 @@ export function Header() {
   };
 
   const firstName = user?.firstName;
+  const isAdmin = user?.role?.toLowerCase() === "admin";
+  const { unreadCount: adminSupportUnread } = useAdminSupportUnread();
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm">
@@ -101,10 +104,21 @@ export function Header() {
             )}
           </Button>
 
-          {user?.role?.toLowerCase() === "admin" && (
-            <Button variant="ghost" size="icon" asChild aria-label="Admin" className="hidden md:flex">
-              <Link href="/admin">
+          {isAdmin && (
+            <Button
+              variant="ghost"
+              size="icon"
+              asChild
+              aria-label="Admin"
+              className="relative hidden md:flex"
+            >
+              <Link href="/admin/support">
                 <Shield className="h-5 w-5" strokeWidth={1.5} />
+                {adminSupportUnread > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-error px-1 text-[10px] font-bold text-white">
+                    {adminSupportUnread > 9 ? "9+" : adminSupportUnread}
+                  </span>
+                )}
               </Link>
             </Button>
           )}
