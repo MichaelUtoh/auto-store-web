@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { authApi } from "@/lib/api/auth";
+import { resetSessionExpiryFlag } from "@/lib/api/client";
 import { linkGuestOnLogin } from "@/lib/chat/identity";
 import type { User, RegisterData } from "@/types/user";
 
@@ -40,6 +41,7 @@ export const useAuthStore = create<AuthStore>()(
             isAuthenticated: true,
             isLoading: false,
           });
+          resetSessionExpiryFlag();
           if (result.accessToken) {
             await linkGuestOnLogin(result.accessToken).catch(() => {});
           }
@@ -59,6 +61,7 @@ export const useAuthStore = create<AuthStore>()(
             isAuthenticated: true,
             isLoading: false,
           });
+          resetSessionExpiryFlag();
           if (result.accessToken) {
             await linkGuestOnLogin(result.accessToken).catch(() => {});
           }

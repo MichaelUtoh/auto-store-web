@@ -1,4 +1,4 @@
-import { apiClient } from "./client";
+import { apiClient, type ApiRequestConfig } from "./client";
 import type { ApiResponse } from "@/types/api";
 import type {
   DiagramDetail,
@@ -64,7 +64,8 @@ export const partFinderApi = {
   identifyPart: async (formData: FormData): Promise<PartIdentificationResult> => {
     const { data } = await apiClient.post<ApiResponse<unknown>>(
       "/part-identification",
-      formData
+      formData,
+      { skipErrorToast: true } as ApiRequestConfig
     );
     return mapPartIdentificationFromApi(data);
   },

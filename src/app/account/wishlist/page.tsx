@@ -1,42 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { usersApi } from "@/lib/api/users";
-import { productsApi } from "@/lib/api/products";
-import type { Product } from "@/types/product";
+import { useWishlistStore } from "@/store/useWishlistStore";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function WishlistPage() {
-  const [productIds, setProductIds] = useState<string[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const products = useWishlistStore((s) => s.products);
+  const isLoading = useWishlistStore((s) => s.isLoading);
+  const fetchWishlist = useWishlistStore((s) => s.fetchWishlist);
 
   useEffect(() => {
-    usersApi
-      .getWishlist()
-      .then((res) => {
-        const data = (res as { data?: string[] }).data ?? res;
-        const ids = Array.isArray(data) ? data : [];
-        setProductIds(ids);
-        if (ids.length === 0) return [];
-        return Promise.all(ids.map((id) => productsApi.getProduct(id)));
-      })
-      .then((results) => {
-        if (results && results.length > 0) {
-          const list = results
-            .map((r) => ((r as { data?: Product }).data ?? r) as Product)
-            .filter(Boolean);
-          setProducts(list);
-        }
-      })
-      .catch(() => setProductIds([]))
-      .finally(() => setLoading(false));
-  }, []);
+    if (isAuthenticated) fetchWishlist();
+  }, [isAuthenticated, fetchWishlist]);
 
-  if (loading) {
+  if (isLoading && products.length === 0) {
     return (
       <Card>
         <CardContent className="py-8 text-center text-secondary">
@@ -46,7 +28,7 @@ export default function WishlistPage() {
     );
   }
 
-  if (productIds.length === 0) {
+  if (products.length === 0) {
     return (
       <Card>
         <CardContent className="py-12 text-center text-secondary">
@@ -59,11 +41,14 @@ export default function WishlistPage() {
     );
   }
 
+  const withNames = products.filter((p) => p.name);
+
   return (
     <div>
       <ProductGrid
-        products={products}
+        products={withNames.length > 0 ? withNames : products}
         isLoading={false}
+        showWishlistActions
         emptyMessage="Wishlist items could not be loaded."
       />
     </div>

@@ -110,7 +110,9 @@ export function resolveProductCardImage(product: Product): string {
     p.thumbnailUrl ??
     p.imageUrl ??
     p.image_url ??
-    p.thumbnail_url;
+    p.thumbnail_url ??
+    (p as { primary_image_url?: string }).primary_image_url ??
+    (p as { primaryImageUrl?: string }).primaryImageUrl;
   if (typeof fallback === "string") {
     const n = normalizeImageUrlString(fallback);
     if (n) return n;

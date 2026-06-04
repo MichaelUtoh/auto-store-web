@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils/format";
 import type { Product } from "@/types/product";
@@ -17,9 +18,14 @@ import {
 interface ProductCardProps {
   product: Product;
   className?: string;
+  showWishlistButton?: boolean;
 }
 
-export function ProductCard({ product, className }: ProductCardProps) {
+export function ProductCard({
+  product,
+  className,
+  showWishlistButton = true,
+}: ProductCardProps) {
   const addItem = useCartStore((s) => s.addItem);
 
   const imageSrc = resolveProductCardImage(product);
@@ -55,6 +61,12 @@ export function ProductCard({ product, className }: ProductCardProps) {
           <span className="pointer-events-none absolute left-3 top-3 rounded-pill bg-primary px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
             Sale
           </span>
+        )}
+        {showWishlistButton && (
+          <WishlistButton
+            productId={product.id}
+            className="absolute right-3 top-3 z-10"
+          />
         )}
         <Button
           size="icon"

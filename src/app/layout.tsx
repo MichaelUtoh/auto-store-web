@@ -11,6 +11,7 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import { SupportChatWidget } from "@/components/support/SupportChatWidget";
 import { AuthHydration } from "@/components/auth/AuthHydration";
 import { NotificationPolling } from "@/components/notifications/NotificationPolling";
+import { WishlistHydration } from "@/components/wishlist/WishlistHydration";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body className="flex min-h-screen flex-col font-sans">
         <ThemeProvider>
           <AuthHydration />
+          <WishlistHydration />
           <NotificationPolling />
           <Header />
           <main className="flex-1 pb-24 lg:pb-0">{children}</main>

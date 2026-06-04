@@ -67,26 +67,4 @@ export const usersApi = {
   deleteAddress: async (id: string) => {
     await apiClient.delete(`/users/me/addresses/${id}`);
   },
-
-  getWishlist: async () => {
-    const { data } = await apiClient.get<ApiResponse<string[]>>(
-      "/users/me/wishlist"
-    );
-    return data;
-  },
-
-  addToWishlist: async (productId: string) => {
-    const { data } = await apiClient.post<ApiResponse<string[]>>(
-      "/users/me/wishlist",
-      { productId }
-    );
-    return data;
-  },
-
-  removeFromWishlist: async (productId: string) => {
-    const { data } = await apiClient.delete<ApiResponse<string[]>>(
-      `/users/me/wishlist/${productId}`
-    );
-    return data;
-  },
 };

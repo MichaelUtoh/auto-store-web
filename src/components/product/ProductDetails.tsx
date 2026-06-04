@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
+import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils/format";
 import type { Product } from "@/types/product";
@@ -179,16 +180,18 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             )}
           </div>
 
-          <div className="mt-8 hidden lg:block">
-            <Button size="lg" className="w-full sm:w-auto" onClick={handleAddToCart}>
+          <div className="mt-8 hidden flex-col gap-3 sm:flex-row lg:flex lg:items-center">
+            <Button size="lg" className="w-full sm:flex-1" onClick={handleAddToCart}>
               Add to cart — {formatPrice(lineTotal)}
             </Button>
+            <WishlistButton productId={product.id} showLabel className="w-full sm:w-auto" />
           </div>
         </div>
       </div>
 
       <div className="fixed bottom-20 left-0 right-0 z-40 border-t border-border bg-background/95 px-4 py-3 backdrop-blur-sm lg:hidden">
-        <div className="mx-auto flex max-w-lg items-center gap-4">
+        <div className="mx-auto flex max-w-lg items-center gap-3">
+          <WishlistButton productId={product.id} />
           <div className="min-w-0 flex-1">
             <p className="text-xs text-secondary">Total</p>
             <p className="text-lg font-bold text-primary">{formatPrice(lineTotal)}</p>

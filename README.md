@@ -75,7 +75,8 @@ The app expects a REST API with the following conventions:
 - **Products:** `GET /products`, `GET /products/:id`, `GET /products/search?q=`, `GET /categories`.
 - **Cart:** `GET /cart`, `POST /cart/items`, `PATCH /cart/items/:id`, `DELETE /cart/items/:id`.
 - **Orders:** `POST /orders`, `GET /orders`, `GET /orders/:id`.
-- **Users:** `GET /users/me`, `PATCH /users/me`, `GET /users/me/addresses`, `GET /users/me/wishlist`.
+- **Users:** `GET /users/me`, `PATCH /users/me`, `GET /users/me/addresses`.
+- **Wishlist:** `GET /wishlist`, `POST /wishlist` (`{ product_id }`), `DELETE /wishlist/:productId`.
 
 Adjust `src/lib/api/*` and stores if your backend uses different paths or response shapes.
 

@@ -1,7 +1,32 @@
-import axios, { type AxiosError } from "axios";
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { API_BASE_URL } from "@/lib/constants";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getApiErrorMessage } from "@/lib/utils/apiError";
 import toast from "react-hot-toast";
+
+export interface ApiRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+  /** When true, the response interceptor will not show a toast for this request. */
+  skipErrorToast?: boolean;
+}
+
+let sessionExpiryHandled = false;
+
+function isAuthRefreshRequest(url?: string): boolean {
+  if (!url) return false;
+  return url.includes("/auth/refresh") || url.includes("/auth/login");
+}
+
+function handleSessionExpired(): void {
+  if (sessionExpiryHandled) return;
+  sessionExpiryHandled = true;
+  toast.dismiss();
+  toast.error("Session expired. Sign in again.");
+  useAuthStore.getState().logout();
+  if (typeof window !== "undefined") {
+    window.location.href = "/login";
+  }
+}
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -28,11 +53,14 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError<{ message?: string; error?: string }>) => {
-    const originalRequest = error.config as typeof error.config & {
-      _retry?: boolean;
-    };
+    const originalRequest = error.config as ApiRequestConfig | undefined;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !isAuthRefreshRequest(originalRequest.url)
+    ) {
       originalRequest._retry = true;
       try {
         await useAuthStore.getState().refreshToken();
@@ -41,41 +69,25 @@ apiClient.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
         }
         return apiClient(originalRequest);
-      } catch (refreshError) {
-        useAuthStore.getState().logout();
-        if (typeof window !== "undefined") {
-          window.location.href = "/login";
-        }
+      } catch {
+        handleSessionExpired();
+        return Promise.reject(error);
       }
     }
 
-    const responseData = error.response?.data;
-    const errStr =
-      typeof responseData?.error === "string" ? responseData.error.trim() : "";
-    const msgStr =
-      typeof responseData?.message === "string"
-        ? responseData.message.trim()
-        : "";
-    const status = error.response?.status;
-    const statusFallback =
-      status === 401
-        ? "Session expired. Sign in again."
-        : status === 403
-          ? "You don't have permission to perform this action."
-          : status === 413
-            ? "Request too large. Try smaller files (max 5 MB per image)."
-            : status === 503
-              ? "Service temporarily unavailable. Try again later."
-              : undefined;
-    const message =
-      errStr ||
-      msgStr ||
-      statusFallback ||
-      error.message ||
-      "Something went wrong";
-    if (typeof window !== "undefined") {
-      toast.error(message);
+    if (error.response?.status === 401) {
+      return Promise.reject(error);
+    }
+
+    const skipToast = originalRequest?.skipErrorToast === true;
+    if (typeof window !== "undefined" && !skipToast && !sessionExpiryHandled) {
+      toast.error(getApiErrorMessage(error));
     }
     return Promise.reject(error);
   }
 );
+
+/** Call after a successful login so the next expiry can show a toast again. */
+export function resetSessionExpiryFlag(): void {
+  sessionExpiryHandled = false;
+}

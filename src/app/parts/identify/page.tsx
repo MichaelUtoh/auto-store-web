@@ -16,7 +16,7 @@ import type {
   VehicleSystem,
 } from "@/types/partFinder";
 import toast from "react-hot-toast";
-import { AxiosError } from "axios";
+import { getApiErrorMessage } from "@/lib/utils/apiError";
 import { cn } from "@/lib/utils";
 
 export default function PartIdentifyPage() {
@@ -51,8 +51,12 @@ export default function PartIdentifyPage() {
       return;
     }
 
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please choose a JPEG, PNG, or WebP image");
+      return;
+    }
+
     const form = new FormData();
-    form.append("image", file);
     form.append("file", file);
     form.append("make", vehicle.make);
     form.append("model", vehicle.model);
@@ -67,17 +71,17 @@ export default function PartIdentifyPage() {
     setCandidates([]);
     try {
       const result = await partFinderApi.identifyPart(form);
-      setCandidates(result.candidates.slice(0, 3));
-      if (result.candidates.length === 0) {
-        toast.error("No parts identified — try another angle or label");
+      const list = result.candidates ?? [];
+      setCandidates(list.slice(0, 3));
+      if (list.length === 0) {
+        toast.error("No parts identified — try another angle or add labels");
       }
     } catch (err) {
-      const axiosErr = err as AxiosError<{ message?: string }>;
-      if (axiosErr.response?.status === 503) {
-        toast.error("Photo upload unavailable");
-      } else {
-        toast.error("Identification failed");
-      }
+      const message = getApiErrorMessage(
+        err,
+        "Identification failed. Sign in and try again."
+      );
+      toast.error(message);
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -151,7 +155,7 @@ export default function PartIdentifyPage() {
                 </span>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp,image/*"
                   capture="environment"
                   className="sr-only"
                   disabled={uploading}
@@ -172,7 +176,7 @@ export default function PartIdentifyPage() {
                     : null;
                 return (
                   <li
-                    key={i}
+                    key={`${c.partName}-${i}`}
                     className="rounded-2xl border border-border bg-muted/40 p-4"
                   >
                     <div className="flex items-center justify-between gap-2">

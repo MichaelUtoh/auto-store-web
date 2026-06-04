@@ -141,7 +141,11 @@ export function mapHotspotProductsFromApi(body: unknown): PartFinderProductSumma
 export function mapPartIdentificationFromApi(
   raw: unknown
 ): PartIdentificationResult {
-  const d = unwrapApiDataBody(raw) as Record<string, unknown>;
+  const unwrapped = unwrapApiDataBody(raw);
+  const d = (unwrapped ?? raw) as Record<string, unknown>;
+  if (!d || typeof d !== "object") {
+    return { id: "", imageUrl: "", candidates: [] };
+  }
   const candidatesRaw = d.candidates;
   const candidates: PartIdentificationCandidate[] = Array.isArray(candidatesRaw)
     ? candidatesRaw.map((c) => {
