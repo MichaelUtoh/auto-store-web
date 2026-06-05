@@ -67,6 +67,8 @@ export default function OrderDetailPage() {
   }
 
   const { shippingAddress } = order;
+  const hasName =
+    shippingAddress.firstName.trim() || shippingAddress.lastName.trim();
 
   return (
     <div className="space-y-6">
@@ -133,8 +135,12 @@ export default function OrderDetailPage() {
           <h3 className="font-medium text-primary">Shipping address</h3>
         </CardHeader>
         <CardContent className="text-sm text-secondary">
-          {shippingAddress.firstName} {shippingAddress.lastName}
-          <br />
+          {hasName && (
+            <>
+              {shippingAddress.firstName} {shippingAddress.lastName}
+              <br />
+            </>
+          )}
           {shippingAddress.line1}
           {shippingAddress.line2 && (
             <>
@@ -147,8 +153,12 @@ export default function OrderDetailPage() {
           {shippingAddress.postalCode}
           <br />
           {shippingAddress.country}
-          <br />
-          {shippingAddress.phone}
+          {shippingAddress.phone && (
+            <>
+              <br />
+              {shippingAddress.phone}
+            </>
+          )}
         </CardContent>
       </Card>
 

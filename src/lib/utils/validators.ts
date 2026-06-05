@@ -41,6 +41,13 @@ export type RegisterInput = z.infer<typeof registerSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type AddressInput = z.infer<typeof addressSchema>;
 
+export const checkoutSchema = addressSchema.extend({
+  paymentMethod: z.string().min(1, "Payment method is required"),
+  billingSameAsShipping: z.boolean(),
+});
+
+export type CheckoutFormValues = z.infer<typeof checkoutSchema>;
+
 export const createQuestionSchema = z
   .object({
     title: z

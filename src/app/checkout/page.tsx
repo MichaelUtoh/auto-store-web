@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { CheckoutForm } from "@/components/checkout/CheckoutForm";
 import { CartItem } from "@/components/cart/CartItem";
 import { formatPrice } from "@/lib/utils/format";
 import { useCartStore } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { ordersApi } from "@/lib/api/orders";
-import type { OrderAddress } from "@/types/order";
+import { placeOrderFromCheckout } from "@/lib/checkout/placeOrder";
+import { getApiErrorMessage } from "@/lib/utils/apiError";
+import type { CheckoutFormValues } from "@/lib/utils/validators";
 import { Button } from "@/components/ui/button";
 
 export default function CheckoutPage() {
@@ -39,17 +41,19 @@ export default function CheckoutPage() {
     }
   }, [isAuthenticated, items.length, orderId, fetchCart]);
 
-  const handleSubmit = async (address: OrderAddress) => {
+  const handleSubmit = async (values: CheckoutFormValues) => {
     setIsSubmitting(true);
     try {
-      const res = await ordersApi.createOrder({ shippingAddress: address });
-      const order = (res as { data?: { id: string } }).data ?? res;
-      const id = (order as { id?: string }).id;
-      if (id) {
-        setOrderId(id);
-        clearCart();
-        router.push(`/account/orders/${id}?openSupport=1`);
-      }
+      const { paymentMethod, billingSameAsShipping, ...address } = values;
+      const order = await placeOrderFromCheckout(address, {
+        paymentMethod,
+        billingSameAsShipping,
+      });
+      setOrderId(order.id);
+      await clearCart();
+      router.push(`/account/orders/${order.id}?openSupport=1`);
+    } catch (err) {
+      toast.error(getApiErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -71,10 +75,14 @@ export default function CheckoutPage() {
   return (
     <div className="page-container py-6 sm:py-8">
       <h1 className="page-title">Checkout</h1>
+      <p className="mt-2 text-sm text-secondary">
+        Your shipping address is saved to your account, then used to place the
+        order.
+      </p>
       <div className="mt-6 grid gap-8 md:grid-cols-2 md:gap-10">
         <div>
           <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-secondary">
-            Shipping address
+            Shipping &amp; payment
           </h2>
           <CheckoutForm onSubmit={handleSubmit} isLoading={isSubmitting} />
         </div>

@@ -1,5 +1,8 @@
 import type { Category, Product, VehicleCompatibility } from "@/types/product";
-import { pickLatestProductImageSrc, PRODUCT_IMAGE_PLACEHOLDER } from "@/lib/utils/helpers";
+import {
+  PRODUCT_IMAGE_PLACEHOLDER,
+  resolveProductCardImage,
+} from "@/lib/utils/helpers";
 
 /** Collect gallery / list image entries from varying API shapes. */
 export function extractProductImagesFromApi(
@@ -53,7 +56,7 @@ function extractThumbnailFields(
 
 /** True when a mapped product has a renderable card image. */
 export function productHasCardImage(product: Product): boolean {
-  return pickLatestProductImageSrc(product.images) !== PRODUCT_IMAGE_PLACEHOLDER;
+  return resolveProductCardImage(product) !== PRODUCT_IMAGE_PLACEHOLDER;
 }
 
 function mapCategoryFromApi(raw: unknown): Category | undefined {

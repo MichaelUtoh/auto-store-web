@@ -10,7 +10,6 @@ export const cartApi = {
 
   addItem: async (productId: string, quantity: number) => {
     const { data } = await apiClient.post<ApiResponse<Cart>>("/cart/items", {
-      productId,
       product_id: productId,
       quantity,
     });
@@ -18,7 +17,7 @@ export const cartApi = {
   },
 
   updateItem: async (itemId: string, quantity: number) => {
-    const { data } = await apiClient.patch<ApiResponse<Cart>>(
+    const { data } = await apiClient.put<ApiResponse<Cart>>(
       `/cart/items/${itemId}`,
       { quantity }
     );

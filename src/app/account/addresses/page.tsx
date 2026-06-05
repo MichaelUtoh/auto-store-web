@@ -1,21 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { usersApi } from "@/lib/api/users";
-import type { OrderAddress } from "@/types/order";
+import { savedAddressToDisplayLines } from "@/lib/utils/mapAddressFromApi";
+import type { SavedAddress } from "@/types/address";
 
 export default function AddressesPage() {
-  const [addresses, setAddresses] = useState<OrderAddress[]>([]);
+  const [addresses, setAddresses] = useState<SavedAddress[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     usersApi
       .getAddresses()
-      .then((res) => {
-        const data = (res as { data?: OrderAddress[] }).data ?? res;
-        setAddresses(Array.isArray(data) ? data : []);
-      })
+      .then(setAddresses)
       .catch(() => setAddresses([]))
       .finally(() => setLoading(false));
   }, []);
@@ -36,7 +35,7 @@ export default function AddressesPage() {
         <CardContent className="py-12 text-center text-secondary">
           <p>No saved addresses.</p>
           <p className="mt-2 text-sm">
-            Add one at checkout or when placing an order.
+            Add one at checkout when you place an order.
           </p>
         </CardContent>
       </Card>
@@ -45,20 +44,22 @@ export default function AddressesPage() {
 
   return (
     <div className="space-y-4">
-      {addresses.map((addr, i) => (
-        <Card key={i}>
+      {addresses.map((addr) => (
+        <Card key={addr.id}>
           <CardContent className="pt-6">
-            <p className="font-medium text-primary">
-              {addr.firstName} {addr.lastName}
-            </p>
-            <p className="mt-1 text-sm text-secondary">
-              {addr.line1}
-              {addr.line2 && `, ${addr.line2}`}
-              <br />
-              {addr.city}, {addr.state} {addr.postalCode}
-              <br />
-              {addr.country} · {addr.phone}
-            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="secondary" className="capitalize">
+                {addr.type}
+              </Badge>
+              {addr.isDefault && (
+                <Badge variant="outline">Default</Badge>
+              )}
+            </div>
+            <div className="mt-2 text-sm text-secondary">
+              {savedAddressToDisplayLines(addr).map((line, i) => (
+                <p key={i}>{line}</p>
+              ))}
+            </div>
           </CardContent>
         </Card>
       ))}

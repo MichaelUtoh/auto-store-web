@@ -43,6 +43,7 @@ export interface Order {
 }
 
 export interface CreateOrderPayload {
-  shippingAddress: OrderAddress;
-  notes?: string;
+  shippingAddressId: string;
+  billingAddressId: string;
+  paymentMethod: string;
 }

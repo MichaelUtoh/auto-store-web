@@ -73,8 +73,9 @@ The app expects a REST API with the following conventions:
 - **Response shape:** `{ data: T }` for single resources; paginated: `{ data: { data: T[], total, page, limit, totalPages } }` or similar.
 - **Auth:** JWT in `Authorization: Bearer <token>` or cookies. Endpoints: `POST /auth/login`, `POST /auth/register`, `POST /auth/refresh`, `GET /auth/me`, `POST /auth/logout`.
 - **Products:** `GET /products`, `GET /products/:id`, `GET /products/search?q=`, `GET /categories`.
-- **Cart:** `GET /cart`, `POST /cart/items`, `PATCH /cart/items/:id`, `DELETE /cart/items/:id`.
-- **Orders:** `POST /orders`, `GET /orders`, `GET /orders/:id`.
+- **Cart:** `GET /cart`, `POST /cart/items`, `PUT /cart/items/:id`, `DELETE /cart/items/:id`, `DELETE /cart`.
+- **Orders:** `POST /orders` (`shipping_address_id`, `billing_address_id`, `payment_method`), `GET /orders`, `GET /orders/:id`.
+- **Addresses:** `GET/POST /users/me/addresses`, `PUT/DELETE /users/me/addresses/:id` (`type`: `shipping` | `billing`).
 - **Users:** `GET /users/me`, `PATCH /users/me`, `GET /users/me/addresses`.
 - **Wishlist:** `GET /wishlist`, `POST /wishlist` (`{ product_id }`), `DELETE /wishlist/:productId`.
 

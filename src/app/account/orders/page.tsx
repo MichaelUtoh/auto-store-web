@@ -15,16 +15,7 @@ export default function OrdersPage() {
   useEffect(() => {
     ordersApi
       .getOrders(1, 20)
-      .then((res) => {
-        const raw = res as unknown as { data?: { data?: Order[] } | Order[] };
-        const data =
-          raw.data && !Array.isArray(raw.data)
-            ? raw.data.data
-            : Array.isArray(raw.data)
-              ? raw.data
-              : undefined;
-        setOrders(Array.isArray(data) ? data : []);
-      })
+      .then(setOrders)
       .catch(() => setOrders([]))
       .finally(() => setLoading(false));
   }, []);

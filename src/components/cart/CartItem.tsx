@@ -7,7 +7,7 @@ import { formatPrice } from "@/lib/utils/format";
 import type { CartItem as CartItemType } from "@/types/cart";
 import {
   isRemoteImageSrc,
-  resolveProductImageSrc,
+  resolveProductCardImage,
 } from "@/lib/utils/helpers";
 import { useCartStore } from "@/store/useCartStore";
 
@@ -19,7 +19,9 @@ export function CartItem({ item }: CartItemProps) {
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
 
-  const imageSrc = resolveProductImageSrc(item.product?.images?.[0]);
+  const imageSrc = item.product
+    ? resolveProductCardImage(item.product)
+    : "/images/placeholder-product.svg";
 
   return (
     <div className="flex gap-4 border-b border-border py-4 last:border-0">
@@ -29,7 +31,7 @@ export function CartItem({ item }: CartItemProps) {
           alt={item.product?.name ?? "Product"}
           fill
           unoptimized={isRemoteImageSrc(imageSrc)}
-          className="object-cover"
+          className="object-contain bg-white p-1"
         />
       </div>
       <div className="min-w-0 flex-1">

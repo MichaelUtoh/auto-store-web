@@ -2,14 +2,23 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addressSchema, type AddressInput } from "@/lib/utils/validators";
+import {
+  checkoutSchema,
+  type CheckoutFormValues,
+} from "@/lib/utils/validators";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+const PAYMENT_METHODS = [
+  { value: "credit_card", label: "Credit card" },
+  { value: "debit_card", label: "Debit card" },
+  { value: "paypal", label: "PayPal" },
+] as const;
+
 interface CheckoutFormProps {
-  defaultValues?: Partial<AddressInput>;
-  onSubmit: (data: AddressInput) => Promise<void>;
+  defaultValues?: Partial<CheckoutFormValues>;
+  onSubmit: (data: CheckoutFormValues) => Promise<void>;
   isLoading?: boolean;
 }
 
@@ -21,14 +30,19 @@ export function CheckoutForm({
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
-  } = useForm<AddressInput>({
-    resolver: zodResolver(addressSchema),
+  } = useForm<CheckoutFormValues>({
+    resolver: zodResolver(checkoutSchema),
     defaultValues: {
-      country: "US",
+      country: "USA",
+      paymentMethod: "credit_card",
+      billingSameAsShipping: true,
       ...defaultValues,
     },
   });
+
+  const billingSameAsShipping = watch("billingSameAsShipping");
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -59,12 +73,13 @@ export function CheckoutForm({
         </div>
       </div>
       <div>
-        <Label htmlFor="line1">Address</Label>
+        <Label htmlFor="line1">Street address</Label>
         <Input
           id="line1"
           {...register("line1")}
           className="mt-1"
           autoComplete="street-address"
+          placeholder="123 Main St"
         />
         {errors.line1 && (
           <p className="mt-1 text-sm text-error">{errors.line1.message}</p>
@@ -94,6 +109,7 @@ export function CheckoutForm({
             {...register("state")}
             className="mt-1"
             autoComplete="address-level1"
+            placeholder="MI"
           />
           {errors.state && (
             <p className="mt-1 text-sm text-error">{errors.state.message}</p>
@@ -110,7 +126,9 @@ export function CheckoutForm({
             autoComplete="postal-code"
           />
           {errors.postalCode && (
-            <p className="mt-1 text-sm text-error">{errors.postalCode.message}</p>
+            <p className="mt-1 text-sm text-error">
+              {errors.postalCode.message}
+            </p>
           )}
         </div>
         <div>
@@ -120,6 +138,7 @@ export function CheckoutForm({
             {...register("country")}
             className="mt-1"
             autoComplete="country-name"
+            placeholder="USA"
           />
           {errors.country && (
             <p className="mt-1 text-sm text-error">{errors.country.message}</p>
@@ -139,6 +158,41 @@ export function CheckoutForm({
           <p className="mt-1 text-sm text-error">{errors.phone.message}</p>
         )}
       </div>
+
+      <div>
+        <Label htmlFor="paymentMethod">Payment method</Label>
+        <select
+          id="paymentMethod"
+          {...register("paymentMethod")}
+          className="input-field mt-1 w-full"
+        >
+          {PAYMENT_METHODS.map((m) => (
+            <option key={m.value} value={m.value}>
+              {m.label}
+            </option>
+          ))}
+        </select>
+        {errors.paymentMethod && (
+          <p className="mt-1 text-sm text-error">
+            {errors.paymentMethod.message}
+          </p>
+        )}
+      </div>
+
+      <label className="flex cursor-pointer items-center gap-3 text-sm text-primary">
+        <input
+          type="checkbox"
+          {...register("billingSameAsShipping")}
+          className="h-4 w-4 rounded border-border"
+        />
+        Billing address is the same as shipping
+      </label>
+      {!billingSameAsShipping && (
+        <p className="text-xs text-secondary">
+          A separate billing address will be saved when you place the order.
+        </p>
+      )}
+
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? "Placing order…" : "Place order"}
       </Button>

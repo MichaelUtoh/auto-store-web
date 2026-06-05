@@ -1,20 +1,37 @@
 export function formatPrice(amount: number, currency = "USD"): string {
+  const value = Number(amount);
+  const safe = Number.isFinite(value) ? value : 0;
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,
-  }).format(amount);
+  }).format(safe);
 }
 
-export function formatDate(date: string | Date): string {
+function toValidDate(date: string | Date | null | undefined): Date | null {
+  if (date == null || date === "") return null;
+  const d = date instanceof Date ? date : new Date(date);
+  return Number.isFinite(d.getTime()) ? d : null;
+}
+
+export function formatDate(
+  date: string | Date | null | undefined,
+  fallback = "—"
+): string {
+  const d = toValidDate(date);
+  if (!d) return fallback;
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
-  }).format(new Date(date));
+  }).format(d);
 }
 
-export function formatRelativeDate(date: string | Date): string {
-  const d = new Date(date);
+export function formatRelativeDate(
+  date: string | Date | null | undefined,
+  fallback = "—"
+): string {
+  const d = toValidDate(date);
+  if (!d) return fallback;
   const now = Date.now();
   const diff = now - d.getTime();
   const mins = Math.floor(diff / 60000);
@@ -24,15 +41,20 @@ export function formatRelativeDate(date: string | Date): string {
   if (hours < 24) return `${hours}h ago`;
   const days = Math.floor(hours / 24);
   if (days < 7) return `${days}d ago`;
-  return formatDate(date);
+  return formatDate(d);
 }
 
-export function formatDateTime(date: string | Date): string {
+export function formatDateTime(
+  date: string | Date | null | undefined,
+  fallback = "—"
+): string {
+  const d = toValidDate(date);
+  if (!d) return fallback;
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-  }).format(new Date(date));
+  }).format(d);
 }

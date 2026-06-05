@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { cartApi } from "@/lib/api/cart";
-import { normalizeCartItemsFromResponse } from "@/lib/utils/cartResponse";
+import {
+  enrichCartItemsMissingImages,
+  mapCartItemsFromApi,
+} from "@/lib/utils/mapCartFromApi";
 import type { CartItem } from "@/types/cart";
 
 interface CartStore {
@@ -9,10 +12,22 @@ interface CartStore {
   addItem: (productId: string, quantity: number) => Promise<void>;
   removeItem: (itemId: string) => Promise<void>;
   updateQuantity: (itemId: string, quantity: number) => Promise<void>;
-  clearCart: () => void;
+  clearCart: () => Promise<void>;
   fetchCart: () => Promise<void>;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+}
+
+/** DELETE/PUT may return 204 or empty body — refetch when mapping yields nothing. */
+async function resolveCartItemsFromResponse(
+  res: unknown
+): Promise<CartItem[]> {
+  let items = mapCartItemsFromApi(res);
+  if (items.length === 0) {
+    const refreshed = await cartApi.getCart();
+    items = mapCartItemsFromApi(refreshed);
+  }
+  return enrichCartItemsMissingImages(items);
 }
 
 export const useCartStore = create<CartStore>((set, get) => ({
@@ -23,11 +38,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     set({ isLoading: true });
     try {
       const res = await cartApi.addItem(productId, quantity);
-      let items = normalizeCartItemsFromResponse(res);
-      if (items.length === 0) {
-        const refreshed = await cartApi.getCart();
-        items = normalizeCartItemsFromResponse(refreshed);
-      }
+      const items = await resolveCartItemsFromResponse(res);
       set({ items, isLoading: false });
     } catch {
       set({ isLoading: false });
@@ -36,13 +47,14 @@ export const useCartStore = create<CartStore>((set, get) => ({
   },
 
   removeItem: async (itemId: string) => {
+    const prev = get().items;
     set({ isLoading: true });
     try {
       const res = await cartApi.removeItem(itemId);
-      const items = normalizeCartItemsFromResponse(res);
+      const items = await resolveCartItemsFromResponse(res);
       set({ items, isLoading: false });
     } catch {
-      set({ isLoading: false });
+      set({ items: prev, isLoading: false });
       throw new Error("Failed to remove item");
     }
   },
@@ -52,24 +64,32 @@ export const useCartStore = create<CartStore>((set, get) => ({
       await get().removeItem(itemId);
       return;
     }
+    const prev = get().items;
     set({ isLoading: true });
     try {
       const res = await cartApi.updateItem(itemId, quantity);
-      const items = normalizeCartItemsFromResponse(res);
+      const items = await resolveCartItemsFromResponse(res);
       set({ items, isLoading: false });
     } catch {
-      set({ isLoading: false });
+      set({ items: prev, isLoading: false });
       throw new Error("Failed to update quantity");
     }
   },
 
-  clearCart: () => set({ items: [] }),
+  clearCart: async () => {
+    try {
+      await cartApi.clearCart();
+    } catch {
+      /* still clear local state after checkout */
+    }
+    set({ items: [], isLoading: false });
+  },
 
   fetchCart: async () => {
     set({ isLoading: true });
     try {
       const res = await cartApi.getCart();
-      const items = normalizeCartItemsFromResponse(res);
+      const items = await enrichCartItemsMissingImages(mapCartItemsFromApi(res));
       set({ items, isLoading: false });
     } catch {
       set({ items: [], isLoading: false });
@@ -80,5 +100,8 @@ export const useCartStore = create<CartStore>((set, get) => ({
     get().items.reduce((sum, item) => sum + item.quantity, 0),
 
   getTotalPrice: () =>
-    get().items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    get().items.reduce((sum, item) => {
+      const line = item.price * item.quantity;
+      return sum + (Number.isFinite(line) ? line : 0);
+    }, 0),
 }));
