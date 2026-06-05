@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { GarageVehicle } from "@/types/partFinder";
+import type { GarageVehicle } from "@/types/garage";
 
 interface GarageStore {
   vehicle: GarageVehicle | null;

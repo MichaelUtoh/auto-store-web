@@ -104,10 +104,10 @@ export default function SearchPageClient() {
             <p className="mt-6 text-center text-sm text-secondary">
               Not sure what you need?{" "}
               <Link
-                href="/parts"
+                href="/categories"
                 className="font-medium text-foreground underline-offset-4 hover:underline"
               >
-                Use the visual part finder
+                Browse categories
               </Link>
             </p>
           )}

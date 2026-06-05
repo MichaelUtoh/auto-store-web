@@ -4,7 +4,6 @@ import { FooterSupportLink } from "@/components/support/FooterSupportLink";
 
 const links = [
   { href: "/products", label: "Products" },
-  { href: "/parts", label: "Part finder" },
   { href: "/q", label: "Community Q&A" },
   { href: "/categories", label: "Categories" },
   { href: "/search", label: "Search" },
