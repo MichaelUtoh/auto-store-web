@@ -10,8 +10,8 @@ import { CategoryScroller } from "@/components/product/CategoryScroller";
 import { SectionHeader } from "@/components/layout/SectionHeader";
 import { Pagination } from "@/components/shared/Pagination";
 import { ProductSearch } from "@/components/product/ProductSearch";
+import { HeroCarousel } from "@/components/shop/HeroCarousel";
 import { useProductStore } from "@/store/useProductStore";
-import { useAuthStore } from "@/store/useAuthStore";
 import {
   flattenCategoryFilterOptions,
   type CategoryFilterOption,
@@ -33,15 +33,12 @@ export function ProductCatalog({
   showHero?: boolean;
 }) {
   const searchParams = useSearchParams();
-  const user = useAuthStore((s) => s.user);
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const [categories, setCategories] = useState<CategoryFilterOption[]>([]);
   const [filterOpen, setFilterOpen] = useState(false);
 
   const { products, pagination, isLoading, fetchProducts } = useProductStore();
 
-  const firstName = user?.firstName;
   const isHome = basePath === "/";
 
   useEffect(() => {
@@ -82,14 +79,10 @@ export function ProductCatalog({
     <div className="page-container py-6 sm:py-8 md:py-10">
       {(showHero || isHome) && (
         <section className="mb-8 sm:mb-10">
-          <h1 className="text-2xl font-bold leading-tight tracking-tight text-primary sm:text-3xl md:text-4xl">
-            {isAuthenticated && firstName
-              ? `Discover quality parts, ${firstName}`
-              : "Discover quality auto parts"}
-          </h1>
-          <p className="mt-2 max-w-md text-sm leading-relaxed text-secondary sm:text-base">
-            Everything you need to keep your vehicle running smoothly.
-          </p>
+          <HeroCarousel
+            title="Discover quality auto parts"
+            subtitle="Everything you need to keep your vehicle running smoothly."
+          />
           <div className="mt-5 lg:hidden">
             <ProductSearch basePath={basePath === "/" ? "/products" : basePath} />
           </div>
