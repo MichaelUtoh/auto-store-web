@@ -20,7 +20,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "AutoParts – Quality Auto Parts",
+  title: "247carkiosk – Quality Auto Parts",
   description: "Shop quality auto parts for your vehicle.",
 };
 

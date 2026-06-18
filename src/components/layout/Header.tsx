@@ -63,7 +63,7 @@ export function Header() {
               {isAuthenticated && firstName ? "Hi!" : "Welcome"}
             </p>
             <p className="truncate text-lg font-bold tracking-tight text-primary sm:text-xl">
-              {isAuthenticated && firstName ? firstName : "AutoParts"}
+              {isAuthenticated && firstName ? firstName : "247CarKiosk"}
             </p>
           </Link>
         </div>

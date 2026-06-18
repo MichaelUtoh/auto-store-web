@@ -14,11 +14,11 @@ type Props = { params: { slug: string } };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const question = await questionsApi.getBySlugServer(params.slug);
   if (!question) {
-    return { title: "Question not found | AutoParts Q&A" };
+    return { title: "Question not found | 247CarKiosk Q&A" };
   }
   const description = question.body.slice(0, 160);
   return {
-    title: `${question.title} | AutoParts Q&A`,
+    title: `${question.title} | 247CarKiosk Q&A`,
     description,
     alternates: { canonical: `/q/${question.slug}` },
     ...(question.status === "closed"

@@ -17,7 +17,7 @@ export function Footer() {
       <div className="page-container flex flex-col gap-8 py-12 md:flex-row md:items-center md:justify-between">
         <div>
           <Link href="/" className="text-xl font-bold tracking-tight text-primary">
-            AutoParts
+            247carkiosk
           </Link>
           <p className="mt-2 max-w-xs text-sm leading-relaxed text-secondary">
             Quality auto parts for your vehicle. Shop with confidence.
@@ -40,7 +40,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-border px-4 py-5 text-center text-sm text-secondary">
-        © {new Date().getFullYear()} AutoParts. All rights reserved.
+        © {new Date().getFullYear()} 247CarKiosk. All rights reserved.
       </div>
     </footer>
   );
