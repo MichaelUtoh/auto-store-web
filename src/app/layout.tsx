@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ToasterTheme } from "@/components/theme/ToasterTheme";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { AuthRouteHidden } from "@/components/layout/AuthRouteHidden";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { CartDrawer } from "@/components/cart/CartDrawer";
@@ -39,11 +40,15 @@ export default function RootLayout({
           <NotificationPolling />
           <Header />
           <main className="flex-1 pb-24 lg:pb-0">{children}</main>
-          <Footer />
+          <AuthRouteHidden>
+            <Footer />
+          </AuthRouteHidden>
           <BottomNav />
           <MobileNav />
           <CartDrawer />
-          <SupportChatWidget />
+          <AuthRouteHidden>
+            <SupportChatWidget />
+          </AuthRouteHidden>
           <ToasterTheme />
         </ThemeProvider>
       </body>
