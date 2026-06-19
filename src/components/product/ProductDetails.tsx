@@ -7,6 +7,8 @@ import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils/format";
 import type { Product } from "@/types/product";
+import type { ProductVehicleCompatibility } from "@/types/vehicleCompatibility";
+import { VehicleCompatibilityTable } from "@/components/vehicle/VehicleCompatibilityTable";
 import { useCartStore } from "@/store/useCartStore";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
@@ -17,6 +19,7 @@ import {
 
 interface ProductDetailsProps {
   product: Product;
+  compatibilities?: ProductVehicleCompatibility[];
 }
 
 function AccordionSection({
@@ -45,7 +48,10 @@ function AccordionSection({
   );
 }
 
-export function ProductDetails({ product }: ProductDetailsProps) {
+export function ProductDetails({
+  product,
+  compatibilities = [],
+}: ProductDetailsProps) {
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
   const addItem = useCartStore((s) => s.addItem);
@@ -62,6 +68,11 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       toast.error("Failed to add to cart");
     }
   };
+
+  const fitmentRows =
+    compatibilities.length > 0
+      ? compatibilities
+      : (product.compatibilities ?? []);
 
   return (
     <>
@@ -176,6 +187,12 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                     </div>
                   ))}
                 </dl>
+              </AccordionSection>
+            )}
+
+            {fitmentRows.length > 0 && (
+              <AccordionSection title="Vehicle compatibility">
+                <VehicleCompatibilityTable items={fitmentRows} />
               </AccordionSection>
             )}
           </div>

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AdminProductImageUpload } from "@/components/admin/AdminProductImageUpload";
+import { AdminProductCompatibilityPicker } from "@/components/admin/AdminProductCompatibilityPicker";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { productImagesToFormRows } from "@/lib/utils/helpers";
 import toast from "react-hot-toast";
@@ -297,6 +298,7 @@ export default function AdminEditProductPage() {
             />
           </div>
         </div>
+        <AdminProductCompatibilityPicker productId={product.id} />
         <div className="flex gap-3">
           <Button type="submit" disabled={submitting}>
             {submitting ? "Saving…" : "Save changes"}

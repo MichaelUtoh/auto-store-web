@@ -1,4 +1,5 @@
-import type { Category, Product, VehicleCompatibility } from "@/types/product";
+import type { Category, Product } from "@/types/product";
+import { mapProductVehicleCompatibilityListFromApi } from "@/lib/utils/mapVehicleCompatibilityFromApi";
 import {
   PRODUCT_IMAGE_PLACEHOLDER,
   resolveProductCardImage,
@@ -74,16 +75,6 @@ function mapCategoryFromApi(raw: unknown): Category | undefined {
   };
 }
 
-function mapVehicleCompatibilityFromApi(raw: unknown): VehicleCompatibility {
-  const v = raw as Record<string, unknown>;
-  return {
-    make: String(v.make ?? ""),
-    model: String(v.model ?? ""),
-    yearFrom: Number(v.year_from ?? v.yearFrom ?? 0) || undefined,
-    yearTo: Number(v.year_to ?? v.yearTo ?? 0) || undefined,
-  };
-}
-
 /** Normalize product JSON from list/detail/wishlist (snake_case or camelCase). */
 export function mapProductFromApi(raw: unknown): Product | null {
   if (!raw || typeof raw !== "object") return null;
@@ -97,10 +88,11 @@ export function mapProductFromApi(raw: unknown): Product | null {
     p.category_id ?? p.categoryId ?? category?.id ?? ""
   );
 
-  const compatRaw = p.vehicle_compatibility ?? p.vehicleCompatibility;
-  const vehicleCompatibility = Array.isArray(compatRaw)
-    ? compatRaw.map(mapVehicleCompatibilityFromApi)
-    : undefined;
+  const compatRaw =
+    p.compatibilities ??
+    p.vehicle_compatibility ??
+    p.vehicleCompatibility;
+  const compatibilities = mapProductVehicleCompatibilityListFromApi(compatRaw);
 
   const thumbs = extractThumbnailFields(p);
 
@@ -121,7 +113,7 @@ export function mapProductFromApi(raw: unknown): Product | null {
     sku: (p.sku as string | undefined) ?? undefined,
     stock: Number(p.stock ?? p.stock_quantity ?? p.stockQuantity ?? 0) || undefined,
     specs: (p.specs as Record<string, string> | undefined) ?? undefined,
-    vehicleCompatibility,
+    compatibilities: compatibilities.length > 0 ? compatibilities : undefined,
     createdAt: String(p.created_at ?? p.createdAt ?? ""),
     updatedAt: String(p.updated_at ?? p.updatedAt ?? ""),
   };

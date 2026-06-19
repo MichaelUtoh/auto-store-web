@@ -1,3 +1,5 @@
+import type { ProductVehicleCompatibility } from "@/types/vehicleCompatibility";
+
 /** Product list/detail payloads: URL string or image row from API (optional `id` for admin DELETE). */
 export type ProductImageEntry = string | { id?: string; url: string };
 
@@ -24,7 +26,8 @@ export interface Product {
   sku?: string;
   stock?: number;
   specs?: Record<string, string>;
-  vehicleCompatibility?: VehicleCompatibility[];
+  /** Linked global compatibility catalog entries (embedded on detail). */
+  compatibilities?: ProductVehicleCompatibility[];
   createdAt: string;
   updatedAt: string;
 }
@@ -36,13 +39,6 @@ export interface Category {
   parentId?: string;
   image?: string;
   productCount?: number;
-}
-
-export interface VehicleCompatibility {
-  make: string;
-  model: string;
-  yearFrom?: number;
-  yearTo?: number;
 }
 
 export interface ProductSearchParams {
@@ -74,7 +70,6 @@ export interface CreateProductPayload {
   sku?: string;
   stock?: number;
   specs?: Record<string, string>;
-  vehicleCompatibility?: VehicleCompatibility[];
 }
 
 /** Admin product edit: track image row ids for DELETE /products/:id/images/:imageId */

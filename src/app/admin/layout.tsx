@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   MessageSquare,
+  Car,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAdminSupportUnread } from "@/hooks/useAdminSupportUnread";
@@ -20,6 +21,11 @@ const nav = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/products/new", label: "Add product", icon: PlusCircle },
+  {
+    href: "/admin/vehicle-compatibilities",
+    label: "Vehicle compatibilities",
+    icon: Car,
+  },
   { href: "/admin/support", label: "Support", icon: MessageSquare },
 ];
 
@@ -96,7 +102,9 @@ export default function AdminLayout({
               pathname === href ||
               (href === "/admin/products" &&
                 pathname.startsWith("/admin/products") &&
-                pathname !== "/admin/products/new");
+                pathname !== "/admin/products/new") ||
+              (href === "/admin/vehicle-compatibilities" &&
+                pathname.startsWith("/admin/vehicle-compatibilities"));
             const showSupportBadge = href === "/admin/support" && supportUnread > 0;
             return (
               <Link

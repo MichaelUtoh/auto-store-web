@@ -5,7 +5,13 @@ import type {
   ProductSearchParams,
   CreateProductPayload,
 } from "@/types/product";
+import type {
+  LinkProductCompatibilitiesPayload,
+  ProductVehicleCompatibility,
+} from "@/types/vehicleCompatibility";
 import type { ApiResponse, PaginatedResponse } from "@/types/api";
+import { mapProductVehicleCompatibilityListFromApi } from "@/lib/utils/mapVehicleCompatibilityFromApi";
+import { unwrapApiDataBody } from "@/lib/utils/mapUserFromApi";
 
 export const productsApi = {
   getProducts: async (params: ProductSearchParams = {}) => {
@@ -74,5 +80,25 @@ export const productsApi = {
 
   deleteProduct: async (id: string) => {
     await apiClient.delete(`/products/${id}`);
+  },
+
+  getProductCompatibility: async (
+    productId: string
+  ): Promise<ProductVehicleCompatibility[]> => {
+    const { data } = await apiClient.get<ApiResponse<unknown>>(
+      `/products/${productId}/compatibility`
+    );
+    return mapProductVehicleCompatibilityListFromApi(unwrapApiDataBody(data));
+  },
+
+  linkProductCompatibility: async (
+    productId: string,
+    payload: LinkProductCompatibilitiesPayload
+  ): Promise<ProductVehicleCompatibility[]> => {
+    const { data } = await apiClient.post<ApiResponse<unknown>>(
+      `/products/${productId}/compatibility`,
+      payload
+    );
+    return mapProductVehicleCompatibilityListFromApi(unwrapApiDataBody(data));
   },
 };

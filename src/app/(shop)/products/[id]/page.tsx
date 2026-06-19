@@ -12,22 +12,29 @@ import { SectionHeader } from "@/components/layout/SectionHeader";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { productsApi } from "@/lib/api/products";
 import type { Product } from "@/types/product";
+import type { ProductVehicleCompatibility } from "@/types/vehicleCompatibility";
 
 export default function ProductPage() {
   const params = useParams();
   const id = params.id as string;
   const [product, setProduct] = useState<Product | null>(null);
+  const [compatibilities, setCompatibilities] = useState<
+    ProductVehicleCompatibility[]
+  >([]);
   const [related, setRelated] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    productsApi
-      .getProduct(id)
-      .then((res) => {
-        const data = (res as { data?: Product }).data ?? res;
+    Promise.all([
+      productsApi.getProduct(id),
+      productsApi.getProductCompatibility(id),
+    ])
+      .then(([productRes, compatList]) => {
+        const data = (productRes as { data?: Product }).data ?? productRes;
         setProduct(data as Product);
+        setCompatibilities(compatList);
         if (data && (data as Product).categoryId) {
           return productsApi.getProducts({
             category: (data as Product).categoryId,
@@ -37,7 +44,9 @@ export default function ProductPage() {
       })
       .then((res) => {
         if (res) {
-          const list = (res as { data?: { data?: Product[] } }).data?.data ?? (Array.isArray(res) ? res : []);
+          const list =
+            (res as { data?: { data?: Product[] } }).data?.data ??
+            (Array.isArray(res) ? res : []);
           setRelated(Array.isArray(list) ? list : []);
         }
       })
@@ -79,7 +88,7 @@ export default function ProductPage() {
       <div className="mb-4">
         <GarageVehicleChip />
       </div>
-      <ProductDetails product={product} />
+      <ProductDetails product={product} compatibilities={compatibilities} />
       <div className="mt-4">
         <SupportHelpButton
           contextType="product"
